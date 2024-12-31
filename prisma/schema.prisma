@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -15,9 +9,8 @@ datasource db {
 }
 
 enum ProjectType {
-  INTERNAL
-  OUTSOURCING
-  PRODUCT
+  SHORT_TERM
+  LONG_TERM
 }
 
 // enum ProjectPhase {
@@ -48,8 +41,8 @@ model Employees {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
-  employeeSkills EmployeeSkills[]
-  phaseRoles     EmployeePhaseRoles[]
+  employeeSkills   EmployeeSkills[]
+  employeeProjects EmployeeProjects[]
 }
 
 model Skills {
@@ -61,6 +54,7 @@ model Skills {
   updatedAt   DateTime @updatedAt
 
   employeeSkills EmployeeSkills[]
+  ProjectSkills  ProjectSkills[]
 }
 
 model EmployeeSkills {
@@ -78,34 +72,43 @@ model Projects {
   name        String      @db.VarChar(255)
   description String?     @db.Text
   domainId    String
-  type        ProjectType @default(INTERNAL)
-  isDeleted   Boolean     @default(false)
+  type        ProjectType @default(SHORT_TERM)
+  isActive    Boolean     @default(true)
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
-  domain Domain  @relation(fields: [domainId], references: [id])
-  phases Phase[]
+  domain           Domain             @relation(fields: [domainId], references: [id])
+  phases           Phase[]
+  EmployeeProjects EmployeeProjects[]
+  ProjectSkills    ProjectSkills[]
+}
+
+model ProjectSkills {
+  id          String   @id @default(uuid())
+  skillId     String
+  projectId   String
+  proficiency Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  projects    Projects @relation(fields: [projectId], references: [id])
+  skills      Skills   @relation(fields: [skillId], references: [id])
 }
 
 model Phase {
-  id         String  @id @default(uuid())
-  name       String  @db.VarChar(100)
-  projectId  String
-  isFinished Boolean @default(false)
+  id          String   @id @default(uuid())
+  name        String   @db.VarChar(100)
+  projectId   String
+  isFinished  Boolean  @default(false)
+  description String?  @db.Text
+  startDate   DateTime
+  endDate     DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  project Projects @relation(fields: [projectId], references: [id])
-
-  EmployeePhaseRoles EmployeePhaseRoles[]
-}
-
-model EmployeePhaseRoles {
-  id         String  @id @default(uuid())
-  employeeId String?
-  phaseId    String
-  isDeleted  Boolean @default(false)
-
-  employee Employees? @relation(fields: [employeeId], references: [id])
-  phase    Phase      @relation(fields: [phaseId], references: [id])
-
-  requireSkills String
+  project          Projects           @relation(fields: [projectId], references: [id])
+  employeeProjects EmployeeProjects[]
 }
 
 model Domain {
@@ -119,16 +122,18 @@ model Domain {
   projects Projects[]
 }
 
-// model Timeline {
-//   id        String @id @default(uuid())
-//   name      String
-//   projectId String
-// }
+model EmployeeProjects {
+  id         String   @id @default(uuid())
+  employeeId String
+  projectId  String
+  phaseId    String
+  action     String
+  timestamp  DateTime
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-// model EmployeeProjects {
-//   id         String   @id @default(uuid())
-//   employeeId String
-//   projectId  String
-//   action     String
-//   timestamp  DateTime
-// }
+  employee Employees @relation(fields: [employeeId], references: [id])
+  project  Projects  @relation(fields: [projectId], references: [id])
+  phase    Phase     @relation(fields: [phaseId], references: [id])
+}
