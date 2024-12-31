@@ -12,7 +12,7 @@
     "resetDB": "npx prisma migrate reset",
     "lint": "next lint",
     "lintFix": "next lint --fix",
-    "format": "prettier --write"
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@prisma/client": "^6.1.0",
