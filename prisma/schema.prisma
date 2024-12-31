@@ -1,0 +1,134 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum ProjectType {
+  INTERNAL
+  OUTSOURCING
+  PRODUCT
+}
+
+// enum ProjectPhase {
+//   PLANNING
+//   DEVELOPMENT
+//   TESTING
+//   DEPLOYMENT
+//   MAINTENANCE
+// }
+
+enum EmployeeRole {
+  DEVELOPER
+  TEAM_LEAD
+  PROJECT_MANAGER
+  QA
+  DESIGNER
+}
+
+model Employees {
+  id          String       @id @default(uuid())
+  name        String       @db.VarChar(255)
+  age         Int?
+  email       String       @unique @db.VarChar(255)
+  avatar      String?      @db.Text
+  role        EmployeeRole @default(DEVELOPER)
+  joiningDate DateTime     @default(now())
+  isActive    Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  employeeSkills EmployeeSkills[]
+  phaseRoles     EmployeePhaseRoles[]
+}
+
+model Skills {
+  id          String   @id @default(uuid())
+  name        String   @db.VarChar(100)
+  description String?  @db.Text
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  employeeSkills EmployeeSkills[]
+}
+
+model EmployeeSkills {
+  id          String @id @default(uuid())
+  employeeId  String
+  skillId     String
+  proficiency Int?
+
+  employee Employees @relation(fields: [employeeId], references: [id])
+  skill    Skills    @relation(fields: [skillId], references: [id])
+}
+
+model Projects {
+  id          String      @id @default(uuid())
+  name        String      @db.VarChar(255)
+  description String?     @db.Text
+  domainId    String
+  type        ProjectType @default(INTERNAL)
+  isDeleted   Boolean     @default(false)
+
+  domain Domain  @relation(fields: [domainId], references: [id])
+  phases Phase[]
+}
+
+model Phase {
+  id         String  @id @default(uuid())
+  name       String  @db.VarChar(100)
+  projectId  String
+  isFinished Boolean @default(false)
+
+  project Projects @relation(fields: [projectId], references: [id])
+
+  EmployeePhaseRoles EmployeePhaseRoles[]
+}
+
+model EmployeePhaseRoles {
+  id         String  @id @default(uuid())
+  employeeId String?
+  phaseId    String
+  isDeleted  Boolean @default(false)
+
+  employee Employees? @relation(fields: [employeeId], references: [id])
+  phase    Phase      @relation(fields: [phaseId], references: [id])
+
+  requireSkills String
+}
+
+model Domain {
+  id          String   @id @default(uuid())
+  name        String   @db.VarChar(100)
+  description String?  @db.Text
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  projects Projects[]
+}
+
+// model Timeline {
+//   id        String @id @default(uuid())
+//   name      String
+//   projectId String
+// }
+
+// model EmployeeProjects {
+//   id         String   @id @default(uuid())
+//   employeeId String
+//   projectId  String
+//   action     String
+//   timestamp  DateTime
+// }
