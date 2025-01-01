@@ -1,13 +1,13 @@
-import Sidebar from "@/components/sidebar";
-import Header from "@/components/header";
-import './globals.css'
+import Sidebar from '@/components/sidebar';
+import Header from '@/components/header';
+import './globals.css';
 export const metadata = {
-  title: "Dashboard",
-  description: "Dashboard layout for the application",
+  title: 'Dashboard',
+  description: 'Dashboard layout for the application'
 };
 
 export default function RootLayout({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {
@@ -15,7 +15,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="flex bg-gray-100">
         <Sidebar />
-        <div className="flex-1 flex flex-col">
+        <div className="flex flex-1 flex-col">
           <Header />
           <div className="p-6">{children}</div>
         </div>
