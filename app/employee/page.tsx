@@ -1,3 +1,5 @@
+import { AddEmployeeDialog } from '@/components/CreatePopUpEmployee';
+
 export default function EmployeePage() {
   return (
     <div>
@@ -25,7 +27,10 @@ export default function EmployeePage() {
             <td className="border-b px-4 py-2">Software Engineer</td>
             <td className="border-b px-4 py-2">React, Node.js</td>
             <td className="border-b px-4 py-2">2023-01-15</td>
-            <td className="border-b px-4 py-2 text-green-500">Active</td>
+            <td className="border-b px-4 py-2 text-green-500">
+              {' '}
+              <AddEmployeeDialog />
+            </td>
           </tr>
         </tbody>
       </table>
