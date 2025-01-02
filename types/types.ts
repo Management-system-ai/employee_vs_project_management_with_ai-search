@@ -1,10 +1,11 @@
 interface Project {
+    id: string;
     name: string;
     domain: string;
     type: string;
     description: string;
-    startDay: string;
-    dueDay: string;
+    startDay?: string;
+    dueDay?: string;
     status: string;
   }
   
@@ -19,6 +20,7 @@ interface Project {
   
 
   interface ProjectDetailProps {
-    project: Project;
+    project: Project | null;
     onClose: () => void;
   }
+  

@@ -2,7 +2,7 @@ import Sidebar from '@/components/sidebar';
 import Header from '@/components/header';
 import './globals.css';
 export const metadata = {
-  title: 'Dashboard',
+  title: 'HR Management',
   description: 'Dashboard layout for the application'
 };
 
