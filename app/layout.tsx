@@ -1,6 +1,7 @@
 import Sidebar from '@/components/sidebar';
 import Header from '@/components/header';
 import './globals.css';
+import { Providers } from "./providers";
 export const metadata = {
   title: 'Dashboard',
   description: 'Dashboard layout for the application'
@@ -17,7 +18,11 @@ export default function RootLayout({
         <Sidebar />
         <div className="flex flex-1 flex-col">
           <Header />
-          <div className="p-6">{children}</div>
+          <Providers>
+
+            <div className="p-6">{children}</div>
+          </Providers>
+
         </div>
       </body>
     </html>
