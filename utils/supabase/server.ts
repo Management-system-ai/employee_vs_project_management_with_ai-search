@@ -1,11 +1,6 @@
-import { createBrowserClient, createServerClient } from '@supabase/ssr';
+import { createServerClient } from '@supabase/ssr';
 import { SUPABASE_KEY, SUPABASE_URL } from '@/constants';
 import { cookies } from 'next/headers';
-
-const supabaseBrowserClient = () => {
-  return createBrowserClient(SUPABASE_URL, SUPABASE_KEY);
-};
-
 const supabaseServerClient = async () => {
   const cookieStore = await cookies();
   return createServerClient(SUPABASE_URL, SUPABASE_KEY, {
@@ -26,4 +21,4 @@ const supabaseServerClient = async () => {
   });
 };
 
-export { supabaseBrowserClient, supabaseServerClient };
+export default supabaseServerClient;
