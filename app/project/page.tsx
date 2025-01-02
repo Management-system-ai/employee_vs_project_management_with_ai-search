@@ -1,35 +1,50 @@
-export default function ProjectPage() {
+"use client";
+import React, { useState } from 'react';
+import SearchBar from '@/components/ui/SearchBar';
+import DataTableProject from '@/components/table/DataTableProject';
+import Pagination from '@/components/table/Pagination';
+
+const ProjectPage: React.FC = () => {
+  const [projects, setProjects] = useState<Project[]>([
+    {
+      name: 'Project Alpha',
+      domain: 'Web Development',
+      type: 'Scrum',
+      description: 'A website revamp project for a major e-commerce platform.',
+      startDay: '2024-02-01',
+      dueDay: '2024-08-01',
+      status: 'In Progress',
+    }
+  ]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
+
+
+  const filteredProjects = projects.filter((project) =>
+    Object.values(project).some((val) => String(val).toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
+  const paginatedProjects = filteredProjects.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const totalPages = Math.ceil(filteredProjects.length / itemsPerPage);
+
   return (
     <div>
-      <h1 className="text-2xl font-bold">Project Management</h1>
-      <table className="mt-6 min-w-full table-auto rounded-md bg-white shadow-md">
-        <thead>
-          <tr>
-            <th className="border-b px-4 py-2 text-left">Name</th>
-            <th className="border-b px-4 py-2 text-left">Domain</th>
-            <th className="border-b px-4 py-2 text-left">Type</th>
-            <th className="border-b px-4 py-2 text-left">Description</th>
-            <th className="border-b px-4 py-2 text-left">Members</th>
-            <th className="border-b px-4 py-2 text-left">Start Day</th>
-            <th className="border-b px-4 py-2 text-left">Due to Day</th>
-            <th className="border-b px-4 py-2 text-left">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td className="border-b px-4 py-2">Project A</td>
-            <td className="border-b px-4 py-2">Software Development</td>
-            <td className="border-b px-4 py-2">Agile</td>
-            <td className="border-b px-4 py-2">
-              A web application project for internal use.
-            </td>
-            <td className="border-b px-4 py-2">John, Sarah, Alex</td>
-            <td className="border-b px-4 py-2">2024-01-01</td>
-            <td className="border-b px-4 py-2">2024-06-01</td>
-            <td className="border-b px-4 py-2 text-green-500">In Progress</td>
-          </tr>
-        </tbody>
-      </table>
+      <div className="flex justify-between items-center mt-1">
+      <h1 className="text-2xl font-bold">Project</h1>
+      <div className='flex'>
+        <SearchBar onSearch={handleSearch} placeholder='Search project ...' />
+        <button className="bg-red-600 text-white px-4 py-2 rounded-md ml-6">New</button>
+      </div>
+      </div>
+      <DataTableProject projects={paginatedProjects}/>
+      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
     </div>
   );
-}
+};
+
+export default ProjectPage;
