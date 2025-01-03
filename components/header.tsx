@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import ProfileIcon from '../resources/images/icons/icon profile.png';
-import { getUser } from '@/utils/user';
+import { getUser } from '@/app/utils/user';
 export default async function Header() {
   const user = await getUser();
 

@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { FaUser, FaClipboardList, FaSignOutAlt } from 'react-icons/fa';
 import { PanelLeft } from 'lucide-react';
-import { signOut } from '@/utils/actions';
+import { signOut } from '@/app/utils/actions';
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(true);

@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import StarryBackground from '@/components/ui/StarryBackground';
 import googleIcon from '@/public/google-icon.svg';
-import { signinWithGoogle } from '@/utils/actions';
+import { signinWithGoogle } from '@/app/utils/actions';
 
 export default function LoginPage() {
   return (
