@@ -1,5 +1,4 @@
 interface Project {
-  
   name: string;
   domainId: string;
   type: string;
@@ -7,11 +6,25 @@ interface Project {
   startDate: string;
   endDate: string;
   updatedAt?: string;
-  // status: string;
+}
+interface Employee {
+  name: string;
+  email: string;
+  role: string;
+  status: boolean;
+  age?: number;
+  avatar: string;
+  isActive?: boolean;
+  createAt?: string;
+  updateAt?: string;
+  joiningDate?: string;
 }
 
 interface DataTableProps {
   projects: Project[];
+}
+interface DataEmployeeTableProps {
+  employees: Employee[];
 }
 
 interface SearchBarProps {
