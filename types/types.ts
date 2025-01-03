@@ -1,11 +1,11 @@
 interface Project {
   name: string;
-  domain: string;
+  domainId: string;
   type: string;
   description: string;
-  startDay: string;
-  dueDay: string;
-  status: string;
+  startDate: string;
+  endDate: string;
+  updatedAt?: string;
 }
 interface Employee {
   name: string;
@@ -31,6 +31,7 @@ interface SearchBarProps {
   onSearch: (query: string) => void;
   placeholder: string;
 }
+
 
 interface ProjectDetailProps {
   project: Project;

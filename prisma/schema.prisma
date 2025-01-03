@@ -30,7 +30,7 @@ enum EmployeeRole {
 }
 
 model Employees {
-  id          String       @id @default(uuid())
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name        String       @db.VarChar(255)
   age         Int?
   email       String       @unique @db.VarChar(255)
@@ -46,7 +46,7 @@ model Employees {
 }
 
 model Skills {
-  id          String   @id @default(uuid())
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name        String   @db.VarChar(100)
   description String?  @db.Text
   isActive    Boolean  @default(true)
@@ -58,9 +58,9 @@ model Skills {
 }
 
 model EmployeeSkills {
-  id          String @id @default(uuid())
-  employeeId  String
-  skillId     String
+  id          String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  employeeId  String @db.Uuid
+  skillId     String @db.Uuid
   proficiency Int?
 
   employee Employees @relation(fields: [employeeId], references: [id])
@@ -68,10 +68,10 @@ model EmployeeSkills {
 }
 
 model Projects {
-  id          String      @id @default(uuid())
+  id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name        String      @db.VarChar(255)
   description String?     @db.Text
-  domainId    String
+  domainId    String      @db.Uuid
   type        ProjectType @default(SHORT_TERM)
   isActive    Boolean     @default(true)
   startDate   DateTime?
@@ -86,9 +86,9 @@ model Projects {
 }
 
 model ProjectSkills {
-  id          String   @id @default(uuid())
-  skillId     String
-  projectId   String
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  skillId     String   @db.Uuid
+  projectId   String   @db.Uuid
   proficiency Int?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -97,9 +97,9 @@ model ProjectSkills {
 }
 
 model Phase {
-  id          String   @id @default(uuid())
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name        String   @db.VarChar(100)
-  projectId   String
+  projectId   String   @db.Uuid
   isFinished  Boolean  @default(false)
   description String?  @db.Text
   startDate   DateTime
@@ -112,7 +112,7 @@ model Phase {
 }
 
 model Domain {
-  id          String   @id @default(uuid())
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name        String   @db.VarChar(100)
   description String?  @db.Text
   isActive    Boolean  @default(true)
@@ -123,10 +123,10 @@ model Domain {
 }
 
 model EmployeeProjects {
-  id         String   @id @default(uuid())
-  employeeId String
-  projectId  String
-  phaseId    String
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  employeeId String   @db.Uuid
+  projectId  String   @db.Uuid
+  phaseId    String   @db.Uuid
   action     String
   timestamp  DateTime
   isActive   Boolean  @default(true)
