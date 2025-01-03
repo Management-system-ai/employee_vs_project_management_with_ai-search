@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { AiOutlineSearch } from 'react-icons/ai'; 
+import { AiOutlineSearch } from 'react-icons/ai';
 
-
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder = "Search projects..." }) => {
+const SearchBar: React.FC<SearchBarProps> = ({
+  onSearch,
+  placeholder = 'Search projects...'
+}) => {
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
 
@@ -23,12 +25,11 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder = "Search p
         onChange={handleChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        className={`border px-4 py-2 rounded-tl-md rounded-bl-md transition-all 
-                    ${isFocused ? 'border-red-600 focus:outline-none' : 'border-red-500'}`} 
+        className={`rounded-bl-md rounded-tl-md border px-4 py-2 transition-all ${isFocused ? 'border-red-600 focus:outline-none' : 'border-red-500'}`}
       />
       <button
         onClick={() => onSearch(query)}
-        className="pl-3 pr-3 h-[42px] bg-red-600 text-white rounded-tr-md rounded-br-md flex items-center justify-center"
+        className="flex h-[42px] items-center justify-center rounded-br-md rounded-tr-md bg-red-600 pl-3 pr-3 text-white"
       >
         <AiOutlineSearch className="text-lg" />
       </button>

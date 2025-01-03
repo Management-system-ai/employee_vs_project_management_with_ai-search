@@ -4,6 +4,7 @@ import SearchBar from '@/components/ui/SearchBar';
 import DataTableProject from '@/components/table/DataTableProject';
 import Pagination from '@/components/table/Pagination';
 import { fetchProjects } from '../api/projects';
+import { Button } from '@nextui-org/react';
 
 const ProjectPage: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -13,10 +14,14 @@ const ProjectPage: React.FC = () => {
   useEffect(() => {
     const loadProjects = async () => {
       const fetchedProjects = await fetchProjects();
-      setProjects(fetchedProjects);
+      if (fetchedProjects) {
+        setProjects(fetchedProjects);
+      }
     };
+
     loadProjects();
   }, []);
+
   const handleSearch = (query: string) => {
     setSearchQuery(query);
   };
@@ -39,9 +44,9 @@ const ProjectPage: React.FC = () => {
         <h1 className="text-2xl font-bold">Project</h1>
         <div className="flex">
           <SearchBar onSearch={handleSearch} placeholder="Search project ..." />
-          <button className="ml-6 rounded-md bg-red-600 px-4 py-2 text-white">
+          <Button className="ml-6 rounded-md bg-red-600 px-4 py-2 text-white">
             New
-          </button>
+          </Button>
         </div>
       </div>
       <DataTableProject projects={paginatedProjects} />

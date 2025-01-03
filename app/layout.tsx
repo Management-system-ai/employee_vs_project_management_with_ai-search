@@ -1,7 +1,7 @@
 import Sidebar from '@/components/sidebar';
 import Header from '@/components/header';
 import './globals.css';
-import { Providers } from "./providers";
+import { Providers } from './providers';
 export const metadata = {
   title: 'HR Management',
   description: 'Dashboard layout for the application'
@@ -14,15 +14,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="flex bg-gray-100">
+      <body className="flex bg-gray-100 text-[#212F3F]">
         <Sidebar />
         <div className="flex flex-1 flex-col">
           <Header />
           <Providers>
-
             <div className="p-6">{children}</div>
           </Providers>
-
         </div>
       </body>
     </html>
