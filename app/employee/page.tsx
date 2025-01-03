@@ -1,39 +1,64 @@
-import { AddEmployeeDialog } from '@/components/CreatePopUpEmployee';
+'use client';
+import React, { useEffect, useState } from 'react';
+import SearchBar from '@/components/ui/SearchBar';
+import Pagination from '@/components/table/Pagination';
+import DataTableEmployee from '@/components/table/DataTableEmployee';
+import { fetchEmPloyee } from '@/app/api/employees/employee_api';
 
-export default function EmployeePage() {
-  return (
-    <div>
-      <h1 className="mb-4 text-2xl font-bold">Employee Management</h1>
+const EmployeePage: React.FC = () => {
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetchEmPloyee();
+        setEmployees(response);
+      } catch (error) {
+        console.error('Failed to fetch employees:', error);
+      }
+    };
 
-      <table className="min-w-full table-auto rounded-md bg-white shadow-md">
-        <thead>
-          <tr>
-            <th className="border-b px-4 py-2 text-left">Name</th>
-            <th className="border-b px-4 py-2 text-left">Age</th>
-            <th className="border-b px-4 py-2 text-left">Phone</th>
-            <th className="border-b px-4 py-2 text-left">Email</th>
-            <th className="border-b px-4 py-2 text-left">Role</th>
-            <th className="border-b px-4 py-2 text-left">Skills</th>
-            <th className="border-b px-4 py-2 text-left">Joining Date</th>
-            <th className="border-b px-4 py-2 text-left">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td className="border-b px-4 py-2">John Doe</td>
-            <td className="border-b px-4 py-2">29</td>
-            <td className="border-b px-4 py-2">123-456-7890</td>
-            <td className="border-b px-4 py-2">johndoe@example.com</td>
-            <td className="border-b px-4 py-2">Software Engineer</td>
-            <td className="border-b px-4 py-2">React, Node.js</td>
-            <td className="border-b px-4 py-2">2023-01-15</td>
-            <td className="border-b px-4 py-2 text-green-500">
-              {' '}
-              <AddEmployeeDialog />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    fetchData();
+  }, []);
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const filteredEmployees = employees.filter(employee =>
+    Object.values(employee).some(val =>
+      String(val).toLowerCase().includes(searchQuery.toLowerCase())
+    )
   );
-}
+
+  const paginatedEmployees = filteredEmployees.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+  const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
+
+  return (
+    <>
+      <div className="mt-1 flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Manage Employees</h1>
+        <div className="flex">
+          <SearchBar onSearch={handleSearch} placeholder="Search employee..." />
+          <button className="ml-6 rounded-md bg-red-600 px-4 py-2 text-white">
+            New
+          </button>
+        </div>
+      </div>
+      <DataTableEmployee employees={paginatedEmployees} />
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
+    </>
+  );
+};
+
+export default EmployeePage;

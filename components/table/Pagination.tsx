@@ -6,7 +6,11 @@ interface PaginationProps {
   onPageChange: (page: number) => void;
 }
 
-const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPageChange }) => {
+const Pagination: React.FC<PaginationProps> = ({
+  currentPage,
+  totalPages,
+  onPageChange
+}) => {
   const handlePrevious = () => {
     if (currentPage > 1) onPageChange(currentPage - 1);
   };
@@ -16,14 +20,22 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
   };
 
   return (
-    <div className="flex justify-center gap-6 items-center mt-4">
-      <button onClick={handlePrevious} disabled={currentPage === 1} className="px-4 py-2 bg-red-600 text-white rounded-md">
+    <div className="mt-4 flex items-center justify-center gap-6">
+      <button
+        onClick={handlePrevious}
+        disabled={currentPage === 1}
+        className="rounded-md bg-red-600 px-4 py-2 text-white"
+      >
         Previous
       </button>
       <span>
         Page {currentPage} of {totalPages}
       </span>
-      <button onClick={handleNext} disabled={currentPage === totalPages} className="px-4 py-2 bg-red-600 text-white rounded-md">
+      <button
+        onClick={handleNext}
+        disabled={currentPage === totalPages}
+        className="rounded-md bg-red-600 px-4 py-2 text-white"
+      >
         Next
       </button>
     </div>
