@@ -7,14 +7,14 @@ export const fetchProjects = async () => {
       .from('Projects')
       .select(`id, name, description, type, isActive, Domain(name)`);
 
-      const formattedProjects = projects?.map(project => ({
-        id: project.id,
-        name: project.name,
-        domain: project.Domain.name,
-        type: project.type,
-        description: project.description,
-        status: project.isActive ? 'Active' : 'Inactive'
-      }));
+    const formattedProjects = projects?.map(project => ({
+      id: project.id,
+      name: project.name,
+      domain: project.Domain.name,
+      type: project.type,
+      description: project.description,
+      status: project.isActive ? 'Active' : 'Inactive'
+    }));
 
     return formattedProjects;
   } catch (error) {
@@ -84,14 +84,28 @@ export const fetchProjectActivities = async (projectId: string) => {
       .eq('projectId', projectId)
       .order('createdAt', { ascending: true });
 
-      const formattedActivities = data?.map(activity => ({
-        action: activity.action,
-        createdAt: activity.createdAt,
-        employee: activity.Employees.name,
-        phase: activity.Phase.name,
-      }));
-      return formattedActivities;
+    const formattedActivities = data?.map(activity => ({
+      action: activity.action,
+      createdAt: activity.createdAt,
+      employee: activity.Employees.name,
+      phase: activity.Phase.name
+    }));
+    return formattedActivities;
   } catch (error) {
     throw new Error('Unexpected error fetching project activities');
+  }
+};
+
+export const addProject = async (newProject: Project) => {
+  try {
+    const supabase = supabaseBrowserClient();
+    const { data, error } = await supabase
+      .from('Projects')
+      .insert([newProject]); // POST dữ liệu vào bảng
+    if (error) throw error;
+    return data; // Trả về dữ liệu vừa thêm
+  } catch (error) {
+    console.error('Error adding project:', error);
+    throw error; // Ném lỗi để xử lý ở nơi khác
   }
 };

@@ -1,4 +1,7 @@
-import { fetchProjectActivities, fetchProjectPhases } from '@/app/api/projects';
+import {
+  fetchProjectActivities,
+  fetchProjectPhases
+} from '@/app/api/project/projects';
 import React, { useEffect, useState } from 'react';
 
 const DetailProjectModal: React.FC<ProjectDetailProps> = ({
@@ -153,10 +156,7 @@ const DetailProjectModal: React.FC<ProjectDetailProps> = ({
               <div>
                 {tabData.map((activity, index) => (
                   <p className="p-2" key={index}>
-                    <span className="text-blue-500">
-                      {activity.employee}
-                    </span>{' '}
-                    -{' '}
+                    <span className="text-blue-500">{activity.employee}</span> -{' '}
                     <span className="text-green-600"> {activity.action} </span>
                     in
                     <span> {activity.phase}</span> phase - at{' '}
