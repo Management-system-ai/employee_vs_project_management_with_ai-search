@@ -1,10 +1,12 @@
 interface Project {
+  id: string;
   name: string;
   domainId: string;
   type: string;
   description: string;
   startDate: string;
   endDate: string;
+  status: string;
   updatedAt?: string;
 }
 interface Employee {
@@ -20,6 +22,11 @@ interface Employee {
   joiningDate?: string;
 }
 
+interface Domain {
+  id: string;
+  name: string;
+}
+
 interface DataTableProps {
   projects: Project[];
 }
@@ -32,8 +39,7 @@ interface SearchBarProps {
   placeholder: string;
 }
 
-
 interface ProjectDetailProps {
-  project: Project;
+  project: Project | null;
   onClose: () => void;
 }
