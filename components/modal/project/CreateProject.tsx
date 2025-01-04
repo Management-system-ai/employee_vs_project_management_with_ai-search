@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
-import { fetchDomains } from '@/app/api/project_api';
+import { fetchDomains } from '@/app/api/domain/domainAPI';
 
 interface Domain {
     id: string;
@@ -35,7 +35,7 @@ const AddProjectModal = ({ isOpen, onClose, onAdd }: {
 
     if (!isOpen) return null;
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         // Lấy dữ liệu từ form
@@ -52,8 +52,12 @@ const AddProjectModal = ({ isOpen, onClose, onAdd }: {
             updatedAt: new Date().toISOString(),
             // status: 'Not Started', 
         };
-
-        onAdd(newProject); // Gọi hàm onAdd khi submit
+        try {
+            await onAdd(newProject); 
+            onClose(); 
+        } catch (error) {
+            console.error('Error submitting project:', error);
+        }
     };
 
     return (

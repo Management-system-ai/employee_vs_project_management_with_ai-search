@@ -24,23 +24,25 @@ export const addProject = async (newProject: Project) => {
     }
 };
 
-// project_api.ts
-interface Domain {
-    id: string;
-    name: string;
-}
-
-export const fetchDomains = async () => {
+// Update project
+export const updateProject = async (id: string, project: Partial<Project>) => {
     try {
         const supabase = supabaseBrowserClient();
-        const { data: domains, error } = await supabase
-            .from('Domain')
-            .select('id, name');
-        
-        if (error) throw error;
-        return domains;
+        console.log('Updating project with ID:', id);
+        console.log('Update data:', project);
+        const { data, error } = await supabase
+            .from('Projects')
+            .update(project)
+            .eq('id', id)
+            .select();
+        if (error) {
+            console.error('Supabase error:', error.message);
+            throw error;
+        }
+        console.log('Update successful. Updated data:', data);
+        return data[0];
     } catch (error) {
-        console.error('Error fetching domains:', error);
-        return [];
+        console.error('Error updating project:', error);
+        throw error;
     }
 };

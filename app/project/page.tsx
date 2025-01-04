@@ -1,13 +1,12 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import SearchBar from '@/components/ui/SearchBar';
 import DataTableProject from '@/components/table/DataTableProject';
 import Pagination from '@/components/table/Pagination';
 import { Plus } from "lucide-react";
 import AddProjectModal from '@/components/modal/project/CreateProject';
-import { addProject, fetchProjects } from "@/app/api/project_api";
+import { addProject, fetchProjects } from "@/app/api/apiProject/project_api";
 
-// Định nghĩa interface cho Project
 interface Project {
   name: string;
   domainId: string;
@@ -20,37 +19,46 @@ interface Project {
 
 const ProjectPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [projects, setProjects] = useState<Project[]>([
-    {
-      name: 'Project Alpha',
-      domainId: 'Web Development',
-      type: 'Scrum',
-      description: 'A website revamp project for a major e-commerce platform.',
-      startDate: '2024-02-01',
-      endDate: '2024-08-01',
-      // status: 'In Progress',
-    }
-  ]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
+  // Fetch projects from API
+  useEffect(() => {
+    const loadProjects = async () => {
+      setIsLoading(true);
+      try {
+        const data = await fetchProjects(); // Gọi API
+        setProjects(data); // Cập nhật state
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadProjects();
+  }, []);
+
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    setCurrentPage(1); 
+    setCurrentPage(1);
   };
 
   const handleAddProject = async (newProject: Project) => {
     try {
-      const addedProject = await addProject(newProject);
+      await addProject(newProject);
+      console.log('Project added successfully');
 
-      if (addedProject) {
-        setProjects((prevProjects) => [...prevProjects, ...addedProject]);
-        setIsModalOpen(false); 
-      }
+      // Fetch lại danh sách dự án sau khi thêm
+      const updatedProjects = await fetchProjects();
+      setProjects(updatedProjects);
+
+      setIsModalOpen(false);
     } catch (error) {
-      console.error('Failed to add project:', error);
-      alert('Error adding project. Please try again.');
+      console.error('Error adding project:', error);
     }
   };
 
@@ -82,19 +90,24 @@ const ProjectPage: React.FC = () => {
           <AddProjectModal
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
-
             onAdd={handleAddProject}
           />
         </div>
       </div>
-      <DataTableProject projects={paginatedProjects} />
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
-      />
+      {isLoading ? (
+        <div className="text-center mt-4">Loading projects...</div>
+      ) : (
+        <>
+          <DataTableProject projects={paginatedProjects} />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        </>
+      )}
     </div>
   );
-
 };
+
 export default ProjectPage;
