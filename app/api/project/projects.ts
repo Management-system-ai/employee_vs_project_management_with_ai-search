@@ -101,11 +101,77 @@ export const addProject = async (newProject: Project) => {
     const supabase = supabaseBrowserClient();
     const { data, error } = await supabase
       .from('Projects')
-      .insert([newProject]); // POST dữ liệu vào bảng
+      .insert([newProject]); 
     if (error) throw error;
-    return data; // Trả về dữ liệu vừa thêm
+    return data; 
   } catch (error) {
     console.error('Error adding project:', error);
-    throw error; // Ném lỗi để xử lý ở nơi khác
+    throw error; 
   }
 };
+
+
+export const deleteProject = async (projectId: string) => {
+  try {
+    const supabase = supabaseBrowserClient();
+
+    const { data: phases, error: phaseFetchError } = await supabase
+      .from('Phase')
+      .select('id')
+      .eq('projectId', projectId);
+
+    if (phaseFetchError) {
+      console.error('Error fetching phases:', phaseFetchError);
+      throw new Error('Failed to fetch phases');
+    }
+
+    if (phases && phases.length > 0) {
+      const { error: phaseDeleteError } = await supabase
+        .from('Phase')
+        .delete()
+        .eq('projectId', projectId);
+
+      if (phaseDeleteError) {
+        console.error('Error deleting phases:', phaseDeleteError);
+        throw new Error('Failed to delete phases');
+      }
+    }
+
+    const { data: employeeProjects, error: employeeProjectFetchError } =
+      await supabase
+        .from('EmployeeProjects')
+        .select('id')
+        .eq('projectId', projectId);
+
+    if (employeeProjectFetchError) {
+      console.error('Error fetching employee projects:', employeeProjectFetchError);
+      throw new Error('Failed to fetch employee projects');
+    }
+
+    if (employeeProjects && employeeProjects.length > 0) {
+      const { error: employeeProjectDeleteError } = await supabase
+        .from('EmployeeProjects')
+        .delete()
+        .eq('projectId', projectId);
+
+      if (employeeProjectDeleteError) {
+        console.error('Error deleting employee projects:', employeeProjectDeleteError);
+        throw new Error('Failed to delete employee projects');
+      }
+    }
+
+    const { error: projectError } = await supabase
+      .from('Projects')
+      .delete()
+      .eq('id', projectId);
+
+    if (projectError) {
+      throw new Error('Failed to delete project');
+    }
+
+  } catch (error) {
+    console.error('Error deleting project:', error);
+    throw new Error('Unexpected error deleting project');
+  }
+};
+

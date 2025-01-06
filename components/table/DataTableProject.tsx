@@ -1,16 +1,27 @@
 import React, { useState } from 'react';
 import { AiOutlineEye, AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai';
 import DetailProjectModal from '../modal/project/DetailProject';
+import DeleteProjectModal from '../modal/project/DeleteProject';
 
 const DataTableProject: React.FC<DataTableProps> = ({ projects }) => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [isDetailModalOpen, setDetailModalOpen] = useState(false);
 
-  const viewDetail = (project: Project) => {
+  const openDetailModal = (project: Project) => {
     setSelectedProject(project);
+    setDetailModalOpen(true);
   };
 
-  const closeModal = () => {
+  const openDeleteModal = (project: Project) => {
+    setSelectedProject(project);
+    setDeleteModalOpen(true);
+  };
+
+  const closeModals = () => {
     setSelectedProject(null);
+    setDeleteModalOpen(false);
+    setDetailModalOpen(false);
   };
 
   return (
@@ -19,7 +30,7 @@ const DataTableProject: React.FC<DataTableProps> = ({ projects }) => {
         <thead>
           <tr>
             {['name', 'domain', 'type', 'description', 'status', 'action'].map(
-              col => (
+              (col) => (
                 <th key={col} className="border-b px-4 py-3 text-left">
                   {col.charAt(0).toUpperCase() + col.slice(1)}
                 </th>
@@ -41,14 +52,17 @@ const DataTableProject: React.FC<DataTableProps> = ({ projects }) => {
                 <div className="flex space-x-4">
                   <button
                     className="text-gray-800"
-                    onClick={() => viewDetail(project)}
+                    onClick={() => openDetailModal(project)}
                   >
                     <AiOutlineEye />
                   </button>
                   <button className="text-blue-500">
                     <AiOutlineEdit />
                   </button>
-                  <button className="text-red-500">
+                  <button
+                    className="text-red-500"
+                    onClick={() => openDeleteModal(project)}
+                  >
                     <AiOutlineDelete />
                   </button>
                 </div>
@@ -58,7 +72,15 @@ const DataTableProject: React.FC<DataTableProps> = ({ projects }) => {
         </tbody>
       </table>
 
-      <DetailProjectModal project={selectedProject} onClose={closeModal} />
+      {/* Detail Modal */}
+      {isDetailModalOpen && selectedProject && (
+        <DetailProjectModal project={selectedProject} onClose={closeModals} />
+      )}
+
+      {/* Delete Modal */}
+      {isDeleteModalOpen && selectedProject && (
+        <DeleteProjectModal project={selectedProject} onClose={closeModals} />
+      )}
     </>
   );
 };

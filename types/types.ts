@@ -43,3 +43,9 @@ interface ProjectDetailProps {
   project: Project | null;
   onClose: () => void;
 }
+
+interface DeleteProjectModalProps {
+  project: Project | null;
+  onClose: () => void;
+}
+
