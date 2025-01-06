@@ -5,7 +5,7 @@ import DataTableProject from '@/components/table/DataTableProject';
 import Pagination from '@/components/table/Pagination';
 import { Plus } from 'lucide-react';
 import AddProjectModal from '@/components/modal/project/CreateProject';
-import { addProject, fetchProjects } from '../api/project/projects';
+import { getProjects, createProject } from '../server-actions/supabase/server';
 
 const ProjectPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -15,7 +15,7 @@ const ProjectPage: React.FC = () => {
   const itemsPerPage = 10;
   useEffect(() => {
     const loadProjects = async () => {
-      const fetchedProjects = await fetchProjects();
+      const fetchedProjects = await getProjects();
       if (fetchedProjects) {
         setProjects(fetchedProjects);
       }
@@ -31,7 +31,7 @@ const ProjectPage: React.FC = () => {
 
   const handleAddProject = async (newProject: Project) => {
     try {
-      const addedProject = await addProject(newProject);
+      const addedProject = await createProject(newProject);
 
       if (addedProject) {
         setProjects(prevProjects => [...prevProjects, ...addedProject]);

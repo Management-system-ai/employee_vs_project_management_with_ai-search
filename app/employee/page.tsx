@@ -3,14 +3,17 @@ import React, { useEffect, useState } from 'react';
 import SearchBar from '@/components/ui/SearchBar';
 import Pagination from '@/components/table/Pagination';
 import DataTableEmployee from '@/components/table/DataTableEmployee';
-import { fetchEmPloyee } from '@/app/api/employees/employee_api';
+// import { fetchEmPloyee } from '@/app/api/employees/employee_api';
+// import { getEmployees } from '../server-actions/supabase/client';
+import { getEmployees } from '../server-actions/supabase/server';
+// import { getEmployees } from '../server-actions/prisma';
 
 const EmployeePage: React.FC = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetchEmPloyee();
+        const response = await getEmployees();
         setEmployees(response);
       } catch (error) {
         console.error('Failed to fetch employees:', error);
