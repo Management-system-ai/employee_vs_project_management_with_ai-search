@@ -75,7 +75,7 @@ const CreateEmployeeModal: React.FC = () => {
     <div>
       <button
         onClick={toggleModal}
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+        className="bg-red-600 ms-2 text-white px-4 py-2 rounded hover:bg-red-500 transition"
       >
         Create Employee
       </button>

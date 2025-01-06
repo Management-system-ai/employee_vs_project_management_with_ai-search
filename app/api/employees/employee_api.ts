@@ -10,7 +10,7 @@ export const fetchEmPloyee = async (): Promise<Employee[]> => {
   }
 };
 
-export const createEmployee = async (employee: Employee) => {
+export const createEmployee = async (employee: any) => {
   try {
     const supabase = supabaseBrowserClient();
 

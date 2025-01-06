@@ -1,24 +1,30 @@
 interface Project {
+  id: string;
   name: string;
-  domain: string;
+  domainId: string;
   type: string;
   description: string;
-  startDay: string;
-  dueDay: string;
+  startDate: string;
+  endDate: string;
   status: string;
+  updatedAt?: string;
 }
 interface Employee {
   name: string;
   email: string;
   role: string;
-  status?: boolean;
+  status: boolean;
   age?: number;
-  avatar?: string;
+  avatar: string;
   isActive?: boolean;
   createAt?: string;
   updateAt?: string;
-  joiningDate: string;
-  skills: string[];
+  joiningDate?: string;
+}
+
+interface Domain {
+  id: string;
+  name: string;
 }
 
 interface DataTableProps {
@@ -34,7 +40,7 @@ interface SearchBarProps {
 }
 
 interface ProjectDetailProps {
-  project: Project;
+  project: Project | null;
   onClose: () => void;
 }
 

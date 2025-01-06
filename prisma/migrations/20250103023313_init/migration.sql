@@ -6,7 +6,7 @@ CREATE TYPE "EmployeeRole" AS ENUM ('DEVELOPER', 'TEAM_LEAD', 'PROJECT_MANAGER',
 
 -- CreateTable
 CREATE TABLE "Employees" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "name" VARCHAR(255) NOT NULL,
     "age" INTEGER,
     "email" VARCHAR(255) NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE "Employees" (
 
 -- CreateTable
 CREATE TABLE "Skills" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "name" VARCHAR(100) NOT NULL,
     "description" TEXT,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
@@ -34,9 +34,9 @@ CREATE TABLE "Skills" (
 
 -- CreateTable
 CREATE TABLE "EmployeeSkills" (
-    "id" TEXT NOT NULL,
-    "employeeId" TEXT NOT NULL,
-    "skillId" TEXT NOT NULL,
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "employeeId" UUID NOT NULL,
+    "skillId" UUID NOT NULL,
     "proficiency" INTEGER,
 
     CONSTRAINT "EmployeeSkills_pkey" PRIMARY KEY ("id")
@@ -44,10 +44,10 @@ CREATE TABLE "EmployeeSkills" (
 
 -- CreateTable
 CREATE TABLE "Projects" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "name" VARCHAR(255) NOT NULL,
     "description" TEXT,
-    "domainId" TEXT NOT NULL,
+    "domainId" UUID NOT NULL,
     "type" "ProjectType" NOT NULL DEFAULT 'SHORT_TERM',
     "isActive" BOOLEAN NOT NULL DEFAULT true,
     "startDate" TIMESTAMP(3),
@@ -60,9 +60,9 @@ CREATE TABLE "Projects" (
 
 -- CreateTable
 CREATE TABLE "ProjectSkills" (
-    "id" TEXT NOT NULL,
-    "skillId" TEXT NOT NULL,
-    "projectId" TEXT NOT NULL,
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "skillId" UUID NOT NULL,
+    "projectId" UUID NOT NULL,
     "proficiency" INTEGER,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -72,9 +72,9 @@ CREATE TABLE "ProjectSkills" (
 
 -- CreateTable
 CREATE TABLE "Phase" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "name" VARCHAR(100) NOT NULL,
-    "projectId" TEXT NOT NULL,
+    "projectId" UUID NOT NULL,
     "isFinished" BOOLEAN NOT NULL DEFAULT false,
     "description" TEXT,
     "startDate" TIMESTAMP(3) NOT NULL,
@@ -87,7 +87,7 @@ CREATE TABLE "Phase" (
 
 -- CreateTable
 CREATE TABLE "Domain" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "name" VARCHAR(100) NOT NULL,
     "description" TEXT,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
@@ -99,10 +99,10 @@ CREATE TABLE "Domain" (
 
 -- CreateTable
 CREATE TABLE "EmployeeProjects" (
-    "id" TEXT NOT NULL,
-    "employeeId" TEXT NOT NULL,
-    "projectId" TEXT NOT NULL,
-    "phaseId" TEXT NOT NULL,
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "employeeId" UUID NOT NULL,
+    "projectId" UUID NOT NULL,
+    "phaseId" UUID NOT NULL,
     "action" TEXT NOT NULL,
     "timestamp" TIMESTAMP(3) NOT NULL,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
