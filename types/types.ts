@@ -43,3 +43,9 @@ interface ProjectDetailProps {
   project: Project | null;
   onClose: () => void;
 }
+
+interface Skill {
+  id: string,
+  name: string,
+  description: string
+}

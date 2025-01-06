@@ -4,6 +4,7 @@ import SearchBar from '@/components/ui/SearchBar';
 import Pagination from '@/components/table/Pagination';
 import DataTableEmployee from '@/components/table/DataTableEmployee';
 import { fetchEmPloyee } from '@/app/api/employees/employee_api';
+import CreateEmployee from "@/components/modal/employee/CreateEmployee";
 
 const EmployeePage: React.FC = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -46,9 +47,7 @@ const EmployeePage: React.FC = () => {
         <h1 className="text-2xl font-bold">Manage Employees</h1>
         <div className="flex">
           <SearchBar onSearch={handleSearch} placeholder="Search employee..." />
-          <button className="ml-6 rounded-md bg-red-600 px-4 py-2 text-white">
-            New
-          </button>
+          <CreateEmployee />
         </div>
       </div>
       <DataTableEmployee employees={paginatedEmployees} />
