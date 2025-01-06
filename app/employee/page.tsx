@@ -1,7 +1,14 @@
+"use client"
+import CreateEmployee from "@/components/modal/employee/CreateEmployee";
+
 export default function EmployeePage() {
   return (
     <div>
-      <h1 className="mb-4 text-2xl font-bold">Employee Management</h1>
+      <div className="flex justify-between">
+        <h1 className="mb-4 text-2xl font-bold">Employee Management</h1>
+        <CreateEmployee />
+      </div>
+
 
       <table className="min-w-full table-auto rounded-md bg-white shadow-md">
         <thead>
