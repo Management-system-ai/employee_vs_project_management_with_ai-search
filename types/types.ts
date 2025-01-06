@@ -10,6 +10,7 @@ interface Project {
   updatedAt?: string;
 }
 interface Employee {
+  id?: string;
   name: string;
   email: string;
   role: string;
@@ -42,4 +43,10 @@ interface SearchBarProps {
 interface ProjectDetailProps {
   project: Project | null;
   onClose: () => void;
+}
+
+interface Skill {
+  id: string;
+  name: string;
+  description: string;
 }

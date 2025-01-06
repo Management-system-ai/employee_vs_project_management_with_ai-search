@@ -41,9 +41,40 @@ export const updateEmployee = async (
 
 export const deleteEmployee = async (id: string) => {
   const supabase = await supabaseServerClient();
+
+  try {
+    const { error: skillsError } = await supabase
+      .from('EmployeeSkills')
+      .delete()
+      .eq('employeeId', id);
+
+    if (skillsError) throw skillsError;
+
+    const { error: projectsError } = await supabase
+      .from('EmployeeProjects')
+      .delete()
+      .eq('employeeId', id);
+
+    if (projectsError) throw projectsError;
+
+    const { data, error: employeeError } = await supabase
+      .from('Employees')
+      .delete()
+      .eq('id', id);
+
+    if (employeeError) throw employeeError;
+
+    return data;
+  } catch (error) {
+    console.error('Error deleting employee:', error);
+    throw error;
+  }
+};
+export const softDeleteEmployee = async (id: string) => {
+  const supabase = await supabaseServerClient();
   const { data, error } = await supabase
     .from('Employees')
-    .delete()
+    .update({ isActive: false })
     .eq('id', id);
   if (error) throw error;
   return data;
