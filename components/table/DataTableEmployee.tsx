@@ -50,11 +50,11 @@ const DataTableEmployee: React.FC<DataEmployeeTableProps> = ({ employees }) => {
                   <span className="ml-2">{employee.name}</span>
                 </div>
               </td>
-              <td className="border-b px-4 py-2">{employee.email}</td>
-              <td className="border-b px-4 py-2">{employee.age}</td>
-              <td className="border-b px-4 py-2">{employee.role}</td>
+              <td className="border-b px-4 py-2 text-left">{employee.email}</td>
+              <td className="border-b px-4 py-2 text-left">{employee.age}</td>
+              <td className="border-b px-4 py-2 text-left">{employee.role}</td>
               <td
-                className={`border-b px-4 py-2 ${employee.isActive ? 'text-green-500' : 'text-orange-500'}`}
+                className={`border-b px-4 py-2 text-left ${employee.isActive ? 'text-green-500' : 'text-red-600'}`}
               >
                 {employee.isActive === true ? 'Active' : 'Disabled'}
               </td>

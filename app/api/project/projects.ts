@@ -3,9 +3,11 @@ import { supabaseBrowserClient } from '@/utils/supabaseClient';
 export const fetchProjects = async () => {
   try {
     const supabase = supabaseBrowserClient();
+    console.log('Fetching projects...');
     const { data: projects } = await supabase
       .from('Projects')
       .select(`id, name, description, type, isActive, Domain(name)`);
+      
 
     const formattedProjects = projects?.map(project => ({
       id: project.id,
@@ -15,7 +17,6 @@ export const fetchProjects = async () => {
       description: project.description,
       status: project.isActive ? 'Active' : 'Inactive'
     }));
-
     return formattedProjects;
   } catch (error) {
     console.error('Error fetching projects:', error);
@@ -101,11 +102,32 @@ export const addProject = async (newProject: Project) => {
     const supabase = supabaseBrowserClient();
     const { data, error } = await supabase
       .from('Projects')
-      .insert([newProject]); // POST dữ liệu vào bảng
+      .insert([newProject]); 
     if (error) throw error;
-    return data; // Trả về dữ liệu vừa thêm
+    return data; 
   } catch (error) {
     console.error('Error adding project:', error);
-    throw error; // Ném lỗi để xử lý ở nơi khác
+    throw error; 
   }
 };
+
+
+export const deleteProject = async (projectId: string) => {
+  try {
+    const supabase = supabaseBrowserClient();
+    const { error: projectError } = await supabase
+      .from('Projects')
+      .update({isActive: false})
+      .eq('id', projectId);
+
+    if (projectError) {
+      console.log('Fail to delete project',projectError);
+      throw new Error('Failed to delete project');
+    }
+
+  } catch (error) {
+    console.error('Error deleting project:', error);
+    throw new Error('Unexpected error deleting project');
+  }
+};
+

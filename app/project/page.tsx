@@ -3,21 +3,37 @@ import React, { useEffect, useState } from 'react';
 import SearchBar from '@/components/ui/SearchBar';
 import DataTableProject from '@/components/table/DataTableProject';
 import Pagination from '@/components/table/Pagination';
-import { Plus } from 'lucide-react';
 import AddProjectModal from '@/components/modal/project/CreateProject';
-import { getProjects, createProject } from '../server-actions/supabase/server';
+import { addProject, fetchProjects } from '../api/project/projects';
 
 const ProjectPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
   const itemsPerPage = 10;
   useEffect(() => {
     const loadProjects = async () => {
-      const fetchedProjects = await getProjects();
+      const fetchedProjects = await fetchProjects();
       if (fetchedProjects) {
         setProjects(fetchedProjects);
+      }
+    };
+
+    loadProjects();
+  }, []);
+
+  useEffect(() => {
+    const loadProjects = async () => {
+      setIsLoading(true);
+      try {
+        const data = await fetchProjects(); 
+        setProjects(data);
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -31,15 +47,11 @@ const ProjectPage: React.FC = () => {
 
   const handleAddProject = async (newProject: Project) => {
     try {
-      const addedProject = await createProject(newProject);
+      const addedProject = await addProject(newProject);
 
-      if (addedProject) {
-        setProjects(prevProjects => [...prevProjects, ...addedProject]);
-        setIsModalOpen(false);
-      }
+      setIsModalOpen(false);
     } catch (error) {
-      console.error('Failed to add project:', error);
-      alert('Error adding project. Please try again.');
+      console.error('Error adding project:', error);
     }
   };
 
@@ -65,8 +77,7 @@ const ProjectPage: React.FC = () => {
             onClick={() => setIsModalOpen(true)}
             className="ml-6 flex items-center rounded-md bg-red-600 px-4 py-2 text-white"
           >
-            <Plus className="mr-2" size={18} />
-            Add projects
+            Create Projects
           </button>
           <AddProjectModal
             isOpen={isModalOpen}
@@ -75,12 +86,18 @@ const ProjectPage: React.FC = () => {
           />
         </div>
       </div>
-      <DataTableProject projects={paginatedProjects} />
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
-      />
+      {isLoading ? (
+        <div className="text-center mt-4">Loading projects...</div>
+      ) : (
+        <>
+          <DataTableProject projects={paginatedProjects} />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        </>
+      )}
     </div>
   );
 };
