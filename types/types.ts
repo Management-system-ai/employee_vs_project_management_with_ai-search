@@ -6,7 +6,7 @@ interface Project {
   description: string;
   startDate: string;
   endDate: string;
-  status: string;
+  status: boolean;
   updatedAt?: string;
 }
 interface Employee {

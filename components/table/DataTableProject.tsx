@@ -1,75 +1,88 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AiOutlineEye, AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai';
+import UpdateProjectForm from '../modal/project/UpdateProject';
+import { updateProject } from '@/app/api/apiProject/project_api';
+import { fetchDomains } from '@/app/api/domain/domain';
 import DetailProjectModal from '../modal/project/DetailProject';
 import DeleteProjectModal from '../modal/project/DeleteProject';
+import handleUpdateProject from '../modal/project/UpdateProject';
 
-const DataTableProject: React.FC<DataTableProps> = ({ projects }) => {
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [isDetailModalOpen, setDetailModalOpen] = useState(false);
+interface DataTableProps {
+  projects: Project[];
+  onProjectsUpdate: (updater: (prevProjects: Project[]) => Project[]) => void;
+}
 
-  const openDetailModal = (project: Project) => {
-    setSelectedProject(project);
-    setDetailModalOpen(true);
-  };
+const DataTableProject: React.FC<DataTableProps> = ({ projects, onProjectsUpdate }) => {
+  const [modalState, setModalState] = useState<{
+    type: 'edit' | 'detail' | 'delete' | null;
+    project: Project | null;
+  }>({ type: null, project: null });
 
-  const openDeleteModal = (project: Project) => {
-    setSelectedProject(project);
-    setDeleteModalOpen(true);
-  };
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [domains, setDomains] = useState<Domain[]>([]);
 
-  const closeModals = () => {
-    setSelectedProject(null);
-    setDeleteModalOpen(false);
-    setDetailModalOpen(false);
+  // Fetch domains when the component mounts
+  useEffect(() => {
+    const loadDomains = async () => {
+      try {
+        const fetchedDomains = await fetchDomains();
+        setDomains(fetchedDomains);
+      } catch (err) {
+        console.error('Failed to fetch domains:', err);
+      }
+    };
+    loadDomains();
+  }, []);
+
+  // Close modal
+  const closeModal = () => {
+    setModalState({ type: null, project: null });
+    setError(null);
   };
 
   return (
-    <>
     <div className="mt-6 max-h-96 overflow-y-auto rounded-md bg-white">
-    <table className="min-w-full table-auto">
+      <table className="min-w-full table-auto">
         <thead>
           <tr>
-            {['name', 'domain', 'type', 'description', 'status', 'action'].map(
-              col => (
-                <th key={col} className="border-b px-4 py-3 text-left">
-                  {col.charAt(0).toUpperCase() + col.slice(1)}
-                </th>
-              )
-            )}
+            {['Name', 'Type', 'Domain', 'Description', 'Status', 'Action'].map((col) => (
+              <th key={col} className="border-b px-4 py-3 text-left">
+                {col}
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>
-          {projects.map((project, index) => (
-            <tr key={index}>
-              <td className="border-b px-4 py-3">{project.name}</td>
-              <td className="border-b px-4 py-3">{project.domain}</td>
-              <td className="border-b px-4 py-3">{project.type}</td>
-              <td className="border-b px-4 py-3">{project.description}</td>
+          {projects.map((project) => (
+            <tr key={project.id}>
+              <td className="border-b px-4 py-2">{project.name}</td>
+              <td className="border-b px-4 py-2">{project.type}</td>
+              <td className="border-b px-4 py-2">{project.domain}</td>
+              <td className="border-b px-4 py-2">{project.description}</td>
               <td
-                className={`border-b px-4 py-3 ${
-                  project.status === 'Active'
-                    ? 'text-green-500'
-                    : 'text-red-600'
-                }`}
+                className={`border-b px-4 py-2 ${project.status === 'Active' ? 'text-green-500' : 'text-red-600'
+                  }`}
               >
                 {project.status}
               </td>
-
-              <td className="border-b px-4 py-3 text-center">
-                <div className="flex space-x-4">
+              <td className="border-b px-4 py-2 text-center">
+                <div className="flex justify-center space-x-3">
                   <button
-                    className="text-gray-800"
-                    onClick={() => openDetailModal(project)}
+                    className="text-gray-800 hover:text-gray-600"
+                    onClick={() => setModalState({ type: 'detail', project })}
                   >
                     <AiOutlineEye />
                   </button>
-                  <button className="text-blue-500">
+                  <button
+                    className="text-blue-500 hover:text-blue-700"
+                    onClick={() => setModalState({ type: 'edit', project })}
+                  >
                     <AiOutlineEdit />
                   </button>
                   <button
-                    className="text-red-500"
-                    onClick={() => openDeleteModal(project)}
+                    className="text-red-500 hover:text-red-700"
+                    onClick={() => setModalState({ type: 'delete', project })}
                   >
                     <AiOutlineDelete />
                   </button>
@@ -79,15 +92,30 @@ const DataTableProject: React.FC<DataTableProps> = ({ projects }) => {
           ))}
         </tbody>
       </table>
-      </div>
-      {isDetailModalOpen && selectedProject && (
-        <DetailProjectModal project={selectedProject} onClose={closeModals} />
-      )}
 
-      {isDeleteModalOpen && selectedProject && (
-        <DeleteProjectModal project={selectedProject} onClose={closeModals} />
+      {/* Modals */}
+      {modalState.type === 'detail' && modalState.project && (
+        <DetailProjectModal project={modalState.project} onClose={closeModal} />
       )}
-    </>
+      {modalState.type === 'edit' && modalState.project && (
+        <UpdateProjectForm
+          project={modalState.project}
+          onClose={closeModal}
+          onUpdate={handleUpdateProject}
+          domains={domains}
+          isLoading={isLoading}
+          error={error}
+        />
+      )}
+      {modalState.type === 'delete' && modalState.project && (
+        <DeleteProjectModal
+          project={modalState.project}
+          onClose={closeModal}
+          onDelete={DeleteProjectModal}
+          isLoading={isLoading}
+        />
+      )}
+    </div>
   );
 };
 
