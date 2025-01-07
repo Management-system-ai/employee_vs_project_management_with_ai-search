@@ -24,16 +24,25 @@ export const addProject = async (newProject: Project) => {
     }
 };
 
+
 // Update project
-export const updateProject = async (id: string, project: Partial<Project>) => {
+export const updateProject = async (id: string, project:Project) => {
     try {
         const supabase = supabaseBrowserClient();
-        console.log('Updating project with ID:', id);
-        console.log('Update data:', project);
+        console.log('Update data before updateupdate:', project);
         const { data, error } = await supabase
             .from('Projects')
-            .update(project)
-            .eq('id', id)
+            .update({
+                name: project.name,            
+                description: project.description, 
+                domainId: project.domainId,       
+                type: project.type,              
+                isActive: project.status,
+                startDate: project.startDate,
+                endDate: project.endDate,     
+                updatedAt: new Date().toISOString(),
+              })
+             .eq('id', id,)
             .select();
         if (error) {
             console.error('Supabase error:', error.message);
