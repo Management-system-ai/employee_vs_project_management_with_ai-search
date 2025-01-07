@@ -55,7 +55,7 @@ const DataTableEmployee: React.FC<DataEmployeeTableProps> = ({ employees }) => {
                 </button>
                 <button
                   className="text-red-500"
-                  onClick={() => handleDelete(employee.id)}
+                  onClick={() => handleDelete(employee.id!)}
                 >
                   <AiOutlineDelete />
                 </button>
