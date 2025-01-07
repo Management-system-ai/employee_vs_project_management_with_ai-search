@@ -10,6 +10,7 @@ interface Project {
   updatedAt?: string;
 }
 interface Employee {
+  id?: string;
   name: string;
   email: string;
   role: string;
@@ -45,7 +46,7 @@ interface ProjectDetailProps {
 }
 
 interface Skill {
-  id: string,
-  name: string,
-  description: string
+  id: string;
+  name: string;
+  description: string;
 }

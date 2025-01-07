@@ -12,7 +12,7 @@ const CreateEmployeeModal: React.FC = () => {
     joiningDate: '',
     role: '',
     avatar: '',
-    skills: [] as string[],
+    skills: [] as string[]
   });
 
   const fetchData = async () => {
@@ -22,7 +22,7 @@ const CreateEmployeeModal: React.FC = () => {
     } catch (error) {
       throw error;
     }
-  }
+  };
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
     setFormData({
@@ -32,31 +32,32 @@ const CreateEmployeeModal: React.FC = () => {
       joiningDate: '',
       role: '',
       avatar: '',
-      skills: [],
+      skills: []
     });
-  }
+  };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value, type } = e.target;
     if (type === 'file') {
       const target = e.target as HTMLInputElement;
-      setFormData((prev) => ({
+      setFormData(prev => ({
         ...prev,
-        [name]: target.files ? target.files[0] : null,
+        [name]: target.files ? target.files[0] : null
       }));
     } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+      setFormData(prev => ({ ...prev, [name]: value }));
     }
   };
 
-
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target;
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       skills: checked
         ? [...prev.skills, value]
-        : prev.skills.filter((skill) => skill !== value),
+        : prev.skills.filter(skill => skill !== value)
     }));
   };
 
@@ -69,21 +70,21 @@ const CreateEmployeeModal: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-  }, [])
+  }, []);
 
   return (
     <div>
       <button
         onClick={toggleModal}
-        className="bg-red-600 ms-2 text-white px-4 py-2 rounded hover:bg-red-500 transition"
+        className="ms-2 rounded bg-red-600 px-4 py-2 text-white transition hover:bg-red-500"
       >
         Create Employee
       </button>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-2/3 max-h-[600px] overflow-y-auto">
-            <h2 className="text-xl font-bold mb-4">Create Employee</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-600 bg-opacity-50">
+          <div className="max-h-[600px] w-2/3 overflow-y-auto rounded-lg bg-white p-6 shadow-lg">
+            <h2 className="mb-4 text-xl font-bold">Create Employee</h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
                 <label htmlFor="name" className="block text-gray-700">
@@ -93,7 +94,7 @@ const CreateEmployeeModal: React.FC = () => {
                   type="text"
                   id="name"
                   name="name"
-                  className="w-full px-3 py-2 border rounded"
+                  className="w-full rounded border px-3 py-2"
                   placeholder="Enter employee name"
                   onChange={handleChange}
                   value={formData.name}
@@ -107,7 +108,7 @@ const CreateEmployeeModal: React.FC = () => {
                   type="email"
                   id="email"
                   name="email"
-                  className="w-full px-3 py-2 border rounded"
+                  className="w-full rounded border px-3 py-2"
                   placeholder="Enter employee email"
                   onChange={handleChange}
                   value={formData.email}
@@ -122,7 +123,7 @@ const CreateEmployeeModal: React.FC = () => {
                     type="date"
                     id="dob"
                     name="dob"
-                    className="w-full px-3 py-2 border rounded"
+                    className="w-full rounded border px-3 py-2"
                     onChange={handleChange}
                     value={formData.dob}
                   />
@@ -135,7 +136,7 @@ const CreateEmployeeModal: React.FC = () => {
                     type="date"
                     id="joiningDate"
                     name="joiningDate"
-                    className="w-full px-3 py-2 border rounded"
+                    className="w-full rounded border px-3 py-2"
                     onChange={handleChange}
                     value={formData.joiningDate}
                   />
@@ -149,7 +150,7 @@ const CreateEmployeeModal: React.FC = () => {
                   <select
                     id="role"
                     name="role"
-                    className="w-full px-3 py-2 border rounded"
+                    className="w-full rounded border px-3 py-2"
                     onChange={handleChange}
                     value={formData.role}
                   >
@@ -168,7 +169,7 @@ const CreateEmployeeModal: React.FC = () => {
                     type="file"
                     id="avatar"
                     name="avatar"
-                    className="w-full px-3 py-2 border rounded"
+                    className="w-full rounded border px-3 py-2"
                     accept="image/*"
                     onChange={handleChange}
                   />
@@ -178,7 +179,10 @@ const CreateEmployeeModal: React.FC = () => {
                 <label className="block text-gray-700">Skills</label>
                 <div className="grid grid-cols-4 gap-2">
                   {skills.map((skill, index) => (
-                    <div key={index} className="flex items-center rounded border p-2">
+                    <div
+                      key={index}
+                      className="flex items-center rounded border p-2"
+                    >
                       <input
                         type="checkbox"
                         id={`skill-${index}`}
@@ -187,7 +191,10 @@ const CreateEmployeeModal: React.FC = () => {
                         onChange={handleCheckboxChange}
                         checked={formData.skills.includes(skill.name)}
                       />
-                      <label htmlFor={`skill-${index}`} className="text-gray-700 w-full p-1">
+                      <label
+                        htmlFor={`skill-${index}`}
+                        className="w-full p-1 text-gray-700"
+                      >
                         {skill.name}
                       </label>
                     </div>
@@ -198,13 +205,13 @@ const CreateEmployeeModal: React.FC = () => {
                 <button
                   type="button"
                   onClick={toggleModal}
-                  className="bg-red-500 text-white px-4 py-2 rounded mr-2 hover:bg-red-600 transition"
+                  className="mr-2 rounded bg-red-500 px-4 py-2 text-white transition hover:bg-red-600"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
+                  className="rounded bg-green-500 px-4 py-2 text-white transition hover:bg-green-600"
                 >
                   Save
                 </button>
