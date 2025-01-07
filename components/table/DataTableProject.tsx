@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { AiOutlineEye, AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai';
 import DetailProjectModal from '../modal/project/DetailProject';
+import { DataTableProps, Project } from '@/types/types';
 
 const DataTableProject: React.FC<DataTableProps> = ({ projects }) => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);

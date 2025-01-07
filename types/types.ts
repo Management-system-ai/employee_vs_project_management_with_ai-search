@@ -1,3 +1,4 @@
+import { EmployeeRole } from '@prisma/client';
 interface Project {
   id: string;
   name: string;
@@ -35,6 +36,12 @@ interface DataEmployeeTableProps {
   employees: Employee[];
 }
 
+interface UpdateEmployeeProps {
+  isOpen: boolean;
+  employee: Employee | null;
+  onClose: () => void;
+}
+
 interface SearchBarProps {
   onSearch: (query: string) => void;
   placeholder: string;
@@ -50,3 +57,23 @@ interface Skill {
   name: string;
   description: string;
 }
+
+export const Role = {
+  developer: { name: 'Developer', value: EmployeeRole.DEVELOPER },
+  teamLeader: { name: 'Team Leader', value: EmployeeRole.TEAM_LEAD },
+  designer: { name: 'Designer', value: EmployeeRole.DESIGNER },
+  tester: { name: 'QA', value: EmployeeRole.QA },
+  projectManager: { name: 'Manager', value: EmployeeRole.PROJECT_MANAGER }
+};
+
+export type {
+  Project,
+  Employee,
+  Domain,
+  DataTableProps,
+  DataEmployeeTableProps,
+  UpdateEmployeeProps,
+  SearchBarProps,
+  ProjectDetailProps,
+  Skill
+};
