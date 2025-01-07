@@ -13,12 +13,12 @@ const UpdateProjectForm: React.FC<UpdateProjectFormProps> = ({
     onClose,
     onUpdate,
 }) => {
+    // Đảm bảo rằng hooks được gọi trong body function component
     const [domains, setDomains] = useState<Domain[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [updatedProject, setUpdatedProject] = useState<Project>(project);
 
-    // Fetch danh sách domains
     useEffect(() => {
         const loadDomains = async () => {
             try {
@@ -31,7 +31,6 @@ const UpdateProjectForm: React.FC<UpdateProjectFormProps> = ({
         loadDomains();
     }, []);
 
-    // Hàm xử lý submit
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         setIsLoading(true);
@@ -40,10 +39,11 @@ const UpdateProjectForm: React.FC<UpdateProjectFormProps> = ({
         try {
             const updatedData = await updateProject(project?.id, updatedProject);
             onUpdate(updatedData);
-            onClose(); // Đóng modal
+            onClose();
         } catch (error) {
-            console.error('Error updating project:', error);
+            // console.error('Error updating project:', error);
             setError('Failed to update project. Please try again.');
+            onClose();
         } finally {
             setIsLoading(false);
         }
@@ -186,53 +186,52 @@ const UpdateProjectForm: React.FC<UpdateProjectFormProps> = ({
                                 rows={3}
                             ></textarea>
                         </div>
+
+                        {/* Status */}
                         <div className="space-y-1">
-                            <div>
-                                <label className="font-lg font-bold">Status</label>
-                                <div className="flex space-x-4">
-                                    {/* Active */}
-                                    <label className="flex items-center space-x-2">
-                                        <input
-                                            type="radio"
-                                            name="status"
-                                            value="true"
-                                            checked={updatedProject.status ? true : false} 
-                                            onChange={() =>
-                                                setUpdatedProject({
-                                                    ...updatedProject,
-                                                    status: true, // Gán giá trị `true` khi chọn "Active"
-                                                })
-                                            }
-                                            className="h-4 w-4 text-red-600"
-                                        />
-                                        <span>Active</span>
-                                    </label>
+                            <label className="font-lg font-bold">Status</label>
+                            <div className="flex space-x-4">
+                                {/* Active */}
+                                <label className="flex items-center space-x-2">
+                                    <input
+                                        type="radio"
+                                        name="status"
+                                        value="true"
+                                        checked={updatedProject.status === true}
+                                        onChange={() =>
+                                            setUpdatedProject({
+                                                ...updatedProject,
+                                                status: true,
+                                            })
+                                        }
+                                        className="h-4 w-4 text-red-600"
+                                    />
+                                    <span>Active</span>
+                                </label>
 
-                                    {/* Inactive */}
-                                    <label className="flex items-center space-x-2">
-                                        <input
-                                            type="radio"
-                                            name="status"
-                                            value="false"
-                                            checked={updatedProject.status ? false : true} 
-                                            onChange={() =>
-                                                setUpdatedProject({
-                                                    ...updatedProject,
-                                                    status: false, // Gán giá trị `false` khi chọn "Inactive"
-                                                })
-                                            }
-                                            className="h-4 w-4 text-red-600"
-                                        />
-                                        <span>Inactive</span>
-                                    </label>
-                                </div>
-
+                                {/* Inactive */}
+                                <label className="flex items-center space-x-2">
+                                    <input
+                                        type="radio"
+                                        name="status"
+                                        value="false"
+                                        checked={updatedProject.status === false}
+                                        onChange={() =>
+                                            setUpdatedProject({
+                                                ...updatedProject,
+                                                status: false,
+                                            })
+                                        }
+                                        className="h-4 w-4 text-red-600"
+                                    />
+                                    <span>Inactive</span>
+                                </label>
                             </div>
-
                         </div>
-
                     </div>
+
                     {error && <div className="mt-4 text-red-500">{error}</div>}
+
                     <div className="mt-6 flex items-end justify-end gap-4">
                         <button
                             type="button"

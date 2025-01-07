@@ -21,7 +21,6 @@ const DetailProjectModal: React.FC<ProjectDetailProps> = ({
       switch (activeTab) {
         case 'phase':
           data = await fetchProjectPhases(project.id);
-          console.log('phase data', data);
           break;
         case 'activity':
           data = await fetchProjectActivities(project.id);

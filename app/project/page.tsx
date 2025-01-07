@@ -3,10 +3,8 @@ import React, { useEffect, useState } from 'react';
 import SearchBar from '@/components/ui/SearchBar';
 import DataTableProject from '@/components/table/DataTableProject';
 import Pagination from '@/components/table/Pagination';
-import { Plus } from 'lucide-react';
 import AddProjectModal from '@/components/modal/project/CreateProject';
-import { createProject } from '../server-actions/supabase/server';
-import { addProject, fetchProjects } from '../api/apiProject/project_api';
+import { addProject, fetchProjects } from '../api/project/projects';
 
 const ProjectPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -79,8 +77,7 @@ const ProjectPage: React.FC = () => {
             onClick={() => setIsModalOpen(true)}
             className="ml-6 flex items-center rounded-md bg-red-600 px-4 py-2 text-white"
           >
-            <Plus className="mr-2" size={18} />
-            Add projects
+            Create Projects
           </button>
           <AddProjectModal
             isOpen={isModalOpen}

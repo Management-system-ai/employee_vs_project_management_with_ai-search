@@ -45,6 +45,11 @@ interface ProjectDetailProps {
   onClose: () => void;
 }
 
+interface DeleteProjectModalProps {
+  project: Project | null;
+  onClose: () => void;
+}
+
 interface Skill {
   id: string;
   name: string;

@@ -50,7 +50,7 @@ const Sidebar = () => {
             onClick={toggleSidebar}
             className="rounded-full hover:bg-gray-200"
           >
-            <PanelLeft className="h-10 w-10" />
+            <PanelLeft className="h-8 w-8" />
           </button>
         </div>
 
@@ -84,7 +84,7 @@ const Sidebar = () => {
         <div className="p-2">
           <button
             onClick={handleLogout}
-            className={`group flex w-full items-center justify-center space-x-2 rounded-lg bg-gradient-to-r from-red-500 to-pink-500 px-4 py-2 text-white transition-all duration-300 hover:from-red-600 hover:to-pink-600 hover:shadow-lg ${
+            className={`group flex w-full items-center justify-center space-x-2 rounded-br-full rounded-tr-full bg-gradient-to-r bg-red-600 px-4 py-3  text-white transition-all duration-300  hover:bg-pink-600 hover:shadow-lg ${
               isOpen ? 'text-base' : 'h-12 w-12'
             }`}
           >

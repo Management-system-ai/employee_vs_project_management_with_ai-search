@@ -22,9 +22,9 @@ export default async function Header() {
               : ProfileIcon
           }
           alt="profile"
-          height={65}
-          width={65}
-          className="rounded-full border-2 border-red-500 shadow-md transition-all duration-300 hover:border-blue-500"
+          height={50}
+          width={50}
+          className="rounded-full border-2 border-red-600 shadow-md transition-all duration-300 hover:border-blue-600"
         ></Image>
       </div>
     </header>

@@ -4,6 +4,8 @@ import UpdateProjectForm from '../modal/project/UpdateProject';
 import { updateProject } from '@/app/api/apiProject/project_api';
 import { fetchDomains } from '@/app/api/domain/domain';
 import DetailProjectModal from '../modal/project/DetailProject';
+import DeleteProjectModal from '../modal/project/DeleteProject';
+import handleUpdateProject from '../modal/project/UpdateProject';
 
 interface DataTableProps {
   projects: Project[];
@@ -12,7 +14,7 @@ interface DataTableProps {
 
 const DataTableProject: React.FC<DataTableProps> = ({ projects, onProjectsUpdate }) => {
   const [modalState, setModalState] = useState<{
-    type: 'edit' | 'detail' | null;
+    type: 'edit' | 'detail' | 'delete' | null;
     project: Project | null;
   }>({ type: null, project: null });
 
@@ -33,40 +35,15 @@ const DataTableProject: React.FC<DataTableProps> = ({ projects, onProjectsUpdate
     loadDomains();
   }, []);
 
-  // Open modal with type and project
-  const openModal = (type: 'edit' | 'detail', project: Project) => {
-    setModalState({ type, project });
-  };
-
-  // Close modal and reset error state
+  // Close modal
   const closeModal = () => {
     setModalState({ type: null, project: null });
     setError(null);
   };
 
-  // Handle updating a project
-  const handleUpdateProject = async (updatedProject: Project) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const result = await updateProject(updatedProject.id, updatedProject);
-      onProjectsUpdate((prevProjects) =>
-        prevProjects.map((p) => (p.id === updatedProject.id ? result : p))
-      );
-      closeModal();
-    } catch (err) {
-      console.error('Error updating project:', err);
-      setError('Failed to update project. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
-    <div>
-     
-      {/* Table Display */}
-      <table className="mt-6 min-w-full table-auto rounded-md bg-white">
+    <div className="mt-6 max-h-96 overflow-y-auto rounded-md bg-white">
+      <table className="min-w-full table-auto">
         <thead>
           <tr>
             {['Name', 'Type', 'Domain', 'Description', 'Status', 'Action'].map((col) => (
@@ -80,27 +57,32 @@ const DataTableProject: React.FC<DataTableProps> = ({ projects, onProjectsUpdate
           {projects.map((project) => (
             <tr key={project.id}>
               <td className="border-b px-4 py-2">{project.name}</td>
-              <td className="border-b px-4 py-2">{project.domain}</td>
               <td className="border-b px-4 py-2">{project.type}</td>
+              <td className="border-b px-4 py-2">{project.domain}</td>
               <td className="border-b px-4 py-2">{project.description}</td>
-              <td className="border-b px-4 py-2 text-green-500">{project.status}</td>
+              <td
+                className={`border-b px-4 py-2 ${project.status === 'Active' ? 'text-green-500' : 'text-red-600'
+                  }`}
+              >
+                {project.status}
+              </td>
               <td className="border-b px-4 py-2 text-center">
                 <div className="flex justify-center space-x-3">
                   <button
                     className="text-gray-800 hover:text-gray-600"
-                    onClick={() => openModal('detail', project)}
+                    onClick={() => setModalState({ type: 'detail', project })}
                   >
                     <AiOutlineEye />
                   </button>
                   <button
                     className="text-blue-500 hover:text-blue-700"
-                    onClick={() => openModal('edit', project)}
+                    onClick={() => setModalState({ type: 'edit', project })}
                   >
                     <AiOutlineEdit />
                   </button>
                   <button
                     className="text-red-500 hover:text-red-700"
-                    disabled={isLoading}
+                    onClick={() => setModalState({ type: 'delete', project })}
                   >
                     <AiOutlineDelete />
                   </button>
@@ -111,12 +93,10 @@ const DataTableProject: React.FC<DataTableProps> = ({ projects, onProjectsUpdate
         </tbody>
       </table>
 
-      <DetailProjectModal
-        project={modalState.project}
-        onClose={closeModal}
-      />
-
-       {/* Conditional Modal Rendering */}
+      {/* Modals */}
+      {modalState.type === 'detail' && modalState.project && (
+        <DetailProjectModal project={modalState.project} onClose={closeModal} />
+      )}
       {modalState.type === 'edit' && modalState.project && (
         <UpdateProjectForm
           project={modalState.project}
@@ -127,8 +107,14 @@ const DataTableProject: React.FC<DataTableProps> = ({ projects, onProjectsUpdate
           error={error}
         />
       )}
-
-
+      {modalState.type === 'delete' && modalState.project && (
+        <DeleteProjectModal
+          project={modalState.project}
+          onClose={closeModal}
+          onDelete={DeleteProjectModal}
+          isLoading={isLoading}
+        />
+      )}
     </div>
   );
 };
