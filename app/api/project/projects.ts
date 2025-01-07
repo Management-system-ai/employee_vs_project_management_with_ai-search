@@ -114,58 +114,13 @@ export const addProject = async (newProject: Project) => {
 export const deleteProject = async (projectId: string) => {
   try {
     const supabase = supabaseBrowserClient();
-
-    const { data: phases, error: phaseFetchError } = await supabase
-      .from('Phase')
-      .select('id')
-      .eq('projectId', projectId);
-
-    if (phaseFetchError) {
-      console.error('Error fetching phases:', phaseFetchError);
-      throw new Error('Failed to fetch phases');
-    }
-
-    if (phases && phases.length > 0) {
-      const { error: phaseDeleteError } = await supabase
-        .from('Phase')
-        .delete()
-        .eq('projectId', projectId);
-
-      if (phaseDeleteError) {
-        console.error('Error deleting phases:', phaseDeleteError);
-        throw new Error('Failed to delete phases');
-      }
-    }
-
-    const { data: employeeProjects, error: employeeProjectFetchError } =
-      await supabase
-        .from('EmployeeProjects')
-        .select('id')
-        .eq('projectId', projectId);
-
-    if (employeeProjectFetchError) {
-      console.error('Error fetching employee projects:', employeeProjectFetchError);
-      throw new Error('Failed to fetch employee projects');
-    }
-
-    if (employeeProjects && employeeProjects.length > 0) {
-      const { error: employeeProjectDeleteError } = await supabase
-        .from('EmployeeProjects')
-        .delete()
-        .eq('projectId', projectId);
-
-      if (employeeProjectDeleteError) {
-        console.error('Error deleting employee projects:', employeeProjectDeleteError);
-        throw new Error('Failed to delete employee projects');
-      }
-    }
-
     const { error: projectError } = await supabase
       .from('Projects')
-      .delete()
+      .update({isActive: false})
       .eq('id', projectId);
 
     if (projectError) {
+      console.log('Fail to delete project',projectError);
       throw new Error('Failed to delete project');
     }
 

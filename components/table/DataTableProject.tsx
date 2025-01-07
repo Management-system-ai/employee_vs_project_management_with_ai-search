@@ -30,7 +30,7 @@ const DataTableProject: React.FC<DataTableProps> = ({ projects }) => {
         <thead>
           <tr>
             {['name', 'domain', 'type', 'description', 'status', 'action'].map(
-              (col) => (
+              col => (
                 <th key={col} className="border-b px-4 py-3 text-left">
                   {col.charAt(0).toUpperCase() + col.slice(1)}
                 </th>
@@ -45,9 +45,16 @@ const DataTableProject: React.FC<DataTableProps> = ({ projects }) => {
               <td className="border-b px-4 py-3">{project.domain}</td>
               <td className="border-b px-4 py-3">{project.type}</td>
               <td className="border-b px-4 py-3">{project.description}</td>
-              <td className="border-b px-4 py-3 text-green-500">
+              <td
+                className={`border-b px-4 py-3 ${
+                  project.status === 'Active'
+                    ? 'text-green-500'
+                    : 'text-red-500'
+                }`}
+              >
                 {project.status}
               </td>
+
               <td className="border-b px-4 py-3 text-center">
                 <div className="flex space-x-4">
                   <button
