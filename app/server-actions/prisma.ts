@@ -99,3 +99,11 @@ export const updateEmployeeProject = async (
   await prisma.employeeProjects.update({ where: { id }, data: updatedFields });
 export const deleteEmployeeProject = async (id: string) =>
   await prisma.employeeProjects.delete({ where: { id } });
+export const getEmployeeActivities = async (employeeId: string) =>
+  await prisma.employeeProjects.findMany({
+    where: { employeeId: employeeId, },
+    include: {
+      project: {select: { name: true }},
+      phase: {select: {name: true}},
+    },
+  });

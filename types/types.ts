@@ -45,6 +45,11 @@ interface ProjectDetailProps {
   onClose: () => void;
 }
 
+interface EmployeeDetailProps {
+  employee: Employee | null;
+  onClose: () => void;
+}
+
 interface Skill {
   id: string;
   name: string;

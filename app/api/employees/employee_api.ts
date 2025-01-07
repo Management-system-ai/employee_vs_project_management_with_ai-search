@@ -1,3 +1,4 @@
+import { getEmployeeActivities } from '@/app/server-actions/prisma';
 import { supabaseBrowserClient } from '@/utils/supabaseClient';
 
 export const fetchEmPloyee = async (): Promise<Employee[]> => {
@@ -70,5 +71,36 @@ export const createEmployee = async (employee: any) => {
   } catch (error) {
     console.error('Error in createEmployee function:', error);
     throw error;
+  }
+};
+
+export const fetchEmployeeActivity = async (
+  employeeId: string | undefined
+): Promise<any[]> => {
+  if (!employeeId) {
+    return [];
+  }
+  try {
+    const employeeActivity = await getEmployeeActivities(employeeId);
+    console.log(employeeActivity)
+    return employeeActivity || [];
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+export const fetchEmPloyeeById = async (employeeId: string | undefined): Promise<Employee | null> => {
+  if (employeeId) {
+
+    try {
+      const supabase = supabaseBrowserClient();
+      const { data: employees } = await supabase.from('Employees').select('*').eq('id', employeeId).single();
+      return employees || null;
+    } catch (error) {
+      throw error;
+    }
+  } else {
+    return null;
   }
 };

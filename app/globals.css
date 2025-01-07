@@ -1,3 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.badge {
+    display: inline-block;
+    border-radius: 9999px;
+  }
+  
+  .badge.join {
+    background-color: #d1fae5; /* Light green */
+    color: #065f46; /* Dark green */
+  }
+  
+  .badge.leave {
+    background-color: #fee2e2; /* Light red */
+    color: #991b1b; /* Dark red */
+  }
+  
