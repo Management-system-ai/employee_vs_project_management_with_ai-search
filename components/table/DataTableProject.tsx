@@ -26,7 +26,8 @@ const DataTableProject: React.FC<DataTableProps> = ({ projects }) => {
 
   return (
     <>
-      <table className="mt-6 min-w-full table-auto rounded-md bg-white">
+    <div className="mt-6 max-h-96 overflow-y-auto rounded-md bg-white">
+    <table className="min-w-full table-auto">
         <thead>
           <tr>
             {['name', 'domain', 'type', 'description', 'status', 'action'].map(
@@ -49,7 +50,7 @@ const DataTableProject: React.FC<DataTableProps> = ({ projects }) => {
                 className={`border-b px-4 py-3 ${
                   project.status === 'Active'
                     ? 'text-green-500'
-                    : 'text-red-500'
+                    : 'text-red-600'
                 }`}
               >
                 {project.status}
@@ -78,13 +79,11 @@ const DataTableProject: React.FC<DataTableProps> = ({ projects }) => {
           ))}
         </tbody>
       </table>
-
-      {/* Detail Modal */}
+      </div>
       {isDetailModalOpen && selectedProject && (
         <DetailProjectModal project={selectedProject} onClose={closeModals} />
       )}
 
-      {/* Delete Modal */}
       {isDeleteModalOpen && selectedProject && (
         <DeleteProjectModal project={selectedProject} onClose={closeModals} />
       )}

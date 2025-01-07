@@ -6,6 +6,7 @@ export const fetchProjects = async () => {
     const { data: projects } = await supabase
       .from('Projects')
       .select(`id, name, description, type, isActive, Domain(name)`);
+      
 
     const formattedProjects = projects?.map(project => ({
       id: project.id,
@@ -15,7 +16,6 @@ export const fetchProjects = async () => {
       description: project.description,
       status: project.isActive ? 'Active' : 'Inactive'
     }));
-
     return formattedProjects;
   } catch (error) {
     console.error('Error fetching projects:', error);

@@ -10,6 +10,7 @@ interface Project {
   updatedAt?: string;
 }
 interface Employee {
+  id?: string;
   name: string;
   email: string;
   role: string;
@@ -49,3 +50,8 @@ interface DeleteProjectModalProps {
   onClose: () => void;
 }
 
+interface Skill {
+  id: string;
+  name: string;
+  description: string;
+}
