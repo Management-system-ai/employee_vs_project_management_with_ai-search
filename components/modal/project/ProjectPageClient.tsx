@@ -1,56 +1,43 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+
+import React, { useState } from 'react';
 import SearchBar from '@/components/ui/SearchBar';
 import DataTableProject from '@/components/table/DataTableProject';
 import Pagination from '@/components/table/Pagination';
 import { Plus } from 'lucide-react';
 import AddProjectModal from '@/components/modal/project/CreateProject';
-import { createProject } from '../server-actions/supabase/server';
-import { addProject, fetchProjects } from '../api/apiProject/project_api';
+import { Project, Domain } from '@/types/types';
 
-const ProjectPage: React.FC = () => {
+interface ProjectPageClientProps {
+  initialProjects: Project[];
+  domains: Domain[];
+  handleAddProject: (newProject: Project) => Promise<Project>;
+  handleProjectActivities: (projectId: string) => Promise<any>[];
+  handlePhases: (projectId: string) => Promise<any>[];
+}
+
+const ProjectPageClient: React.FC<ProjectPageClientProps> = ({
+  initialProjects,
+  domains,
+  handleAddProject,
+  handleProjectActivities,
+  handlePhases
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<Project[]>(initialProjects);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
   const itemsPerPage = 10;
-  useEffect(() => {
-    const loadProjects = async () => {
-      const fetchedProjects = await fetchProjects();
-      if (fetchedProjects) {
-        setProjects(fetchedProjects);
-      }
-    };
-
-    loadProjects();
-  }, []);
-
-  useEffect(() => {
-    const loadProjects = async () => {
-      setIsLoading(true);
-      try {
-        const data = await fetchProjects(); 
-        setProjects(data);
-      } catch (error) {
-        console.error('Error fetching projects:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadProjects();
-  }, []);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     setCurrentPage(1);
   };
 
-  const handleAddProject = async (newProject: Project) => {
+  const addProjectHandler = async (newProject: Project) => {
     try {
-      const addedProject = await addProject(newProject);
-
+      const addedProject = await handleAddProject(newProject);
+      setProjects(prevProjects => [...prevProjects, addedProject]);
       setIsModalOpen(false);
     } catch (error) {
       console.error('Error adding project:', error);
@@ -83,25 +70,25 @@ const ProjectPage: React.FC = () => {
             Add projects
           </button>
           <AddProjectModal
+            domains={domains}
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
-            onAdd={handleAddProject}
+            onAdd={addProjectHandler}
           />
         </div>
       </div>
-      {isLoading ? (
-        <div className="text-center mt-4">Loading projects...</div>
-      ) : (
-        <>
-          <DataTableProject projects={paginatedProjects} />
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-          />
-        </>
-      )}
+      <DataTableProject
+        projects={paginatedProjects}
+        onActivityFunction={handleProjectActivities}
+        onPhaseFunction={handlePhases}
+      />
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 };
-export default ProjectPage;
+
+export default ProjectPageClient;
