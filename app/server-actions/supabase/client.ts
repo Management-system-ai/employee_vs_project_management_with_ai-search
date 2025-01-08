@@ -182,7 +182,7 @@ export const deleteProjectSkill = async (id: string) => {
 
 // Phases CRUD Actions
 export const createPhase = async (phase: Phase) => {
-  const { data, error } = await supabase.from('Phase').insert(phase);
+  const { data, error } = await supabase.from('Phase').insert(phase).single();
   if (error) throw error;
   return data;
 };

@@ -1,3 +1,4 @@
+import { Phase } from '@prisma/client';
 interface Project {
   id: string;
   name: string;
@@ -49,4 +50,16 @@ interface Skill {
   id: string;
   name: string;
   description: string;
+}
+
+export type UpdatedPhase = Omit<
+  Phase,
+  'id' | 'isFinished' | 'createdAt' | 'updatedAt'
+>;
+
+export interface ModalCreatePhase {
+  showModalDelete: boolean;
+  setShowModalDelete: (value: boolean) => void;
+  projectId: string;
+  projectName: string;
 }
