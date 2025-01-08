@@ -2,6 +2,7 @@ import {
     fetchEmployeeActivity,
     fetchEmPloyeeById
 } from '@/app/api/employees/employee_api';
+import { getEmployeeSkillsById } from '@/app/server-actions/prisma';
 import React, { useEffect, useState } from 'react';
 
 const DetailEmployeeModal: React.FC<EmployeeDetailProps> = ({
@@ -10,18 +11,23 @@ const DetailEmployeeModal: React.FC<EmployeeDetailProps> = ({
 }) => {
     const [activeTab, setActiveTab] = useState('detail');
     const [tabData, setTabData] = useState<any[]>([]);
+    const [skills, setSkills] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (employee == undefined) return;
-
+        let data: any = [];
+        let skillUser: any = [];
         const loadData = async () => {
             setLoading(true);
-            let data: any = [];
+         
             switch (activeTab) {
                 case 'detail':
-                    data = await fetchEmPloyeeById(employee.id);
-                    console.log(data)
+                    if (employee.id) {
+                        data = await fetchEmPloyeeById(employee.id);
+                        skillUser = await getEmployeeSkillsById(employee.id);
+                    }
+                    console.log(skills)
                     break;
                 case 'activity':
                     data = await fetchEmployeeActivity(employee.id);
@@ -31,6 +37,7 @@ const DetailEmployeeModal: React.FC<EmployeeDetailProps> = ({
                     break;
             }
             setTabData(data);
+            setSkills(skillUser)
             setLoading(false);
         };
 
@@ -57,7 +64,7 @@ const DetailEmployeeModal: React.FC<EmployeeDetailProps> = ({
                         <div className="space-y-2">
                             <div className="flex">
                                 <span className="font-lg w-1/6 font-bold">Avatar:</span>
-                                <span>{employee.avatar}</span> 
+                                <span>{employee.avatar}</span>
                             </div>
                             <div className="flex">
                                 <span className="font-lg w-1/6 font-bold">Name:</span>
@@ -76,6 +83,23 @@ const DetailEmployeeModal: React.FC<EmployeeDetailProps> = ({
                             <div className="flex">
                                 <span className="font-lg w-1/6 font-bold">Role:</span>
                                 <span>{employee.role}</span>
+                            </div>
+                            <div className="flex">
+                                <span className="font-lg w-1/6 font-bold">Skills:</span>
+                                <div className="w-5/6 space-y-1">
+                                    {skills && skills.length > 0 ? (
+                                        skills.map((skill, index) => (
+                                            <span
+                                                key={index}
+                                                className="inline-block bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded mr-2"
+                                            >
+                                                {skill.skill.name}
+                                            </span>
+                                        ))
+                                    ) : (
+                                        <span>No skills added</span>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -101,7 +125,7 @@ const DetailEmployeeModal: React.FC<EmployeeDetailProps> = ({
                                             <td className="p-2 text-left">{activity.project.name}</td>
                                             <td className="p-2 text-left">{activity.phase.name}</td>
                                             <td className="p-2 text-left">
-                                                <span className={`badge ${activity.action ? "join" : "leave"}`}>
+                                                <span className={`px-1 py-1/2 badge ${activity.action ? "join" : "leave"}`}>
                                                     {activity.action ? "Join" : "Leave"}
                                                 </span>
                                             </td>

@@ -53,6 +53,13 @@ export const updateEmployeeSkill = async (
 ) => await prisma.employeeSkills.update({ where: { id }, data: updatedFields });
 export const deleteEmployeeSkill = async (id: string) =>
   await prisma.employeeSkills.delete({ where: { id } });
+export const getEmployeeSkillsById = async (employeeId: string) =>
+  await prisma.employeeSkills.findMany({
+    where: { employeeId: employeeId },
+    select: {
+      skill: { select: { name: true } }, 
+    },
+  })
 
 // ProjectSkills
 export const createProjectSkill = async (projectSkill: ProjectSkills) =>
@@ -107,3 +114,5 @@ export const getEmployeeActivities = async (employeeId: string) =>
       phase: {select: {name: true}},
     },
   });
+
+

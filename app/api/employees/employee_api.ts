@@ -90,7 +90,7 @@ export const fetchEmployeeActivity = async (
 };
 
 
-export const fetchEmPloyeeById = async (employeeId: string | undefined): Promise<Employee | null> => {
+export const fetchEmPloyeeById = async (employeeId: string): Promise<Employee | null> => {
   if (employeeId) {
 
     try {

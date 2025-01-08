@@ -6,7 +6,7 @@ interface Project {
   description: string;
   startDate: string;
   endDate: string;
-  status: string;
+  status: boolean;
   updatedAt?: string;
 }
 interface Employee {
@@ -47,6 +47,9 @@ interface ProjectDetailProps {
 
 interface EmployeeDetailProps {
   employee: Employee | null;
+}
+interface DeleteProjectModalProps {
+  project: Project | null;
   onClose: () => void;
 }
 
