@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { AiOutlineEye, AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai';
 import UpdateProjectForm from '../modal/project/UpdateProject';
-import { updateProject } from '@/app/api/apiProject/project_api';
 import { fetchDomains } from '@/app/api/domain/domain';
 import DetailProjectModal from '../modal/project/DetailProject';
+import { DataTableProps, Project } from '@/types/types';
 import DeleteProjectModal from '../modal/project/DeleteProject';
 import handleUpdateProject from '../modal/project/UpdateProject';
 
@@ -12,7 +12,10 @@ interface DataTableProps {
   onProjectsUpdate: (updater: (prevProjects: Project[]) => Project[]) => void;
 }
 
-const DataTableProject: React.FC<DataTableProps> = ({ projects, onProjectsUpdate }) => {
+const DataTableProject: React.FC<DataTableProps> = ({
+  projects,
+  onProjectsUpdate
+}) => {
   const [modalState, setModalState] = useState<{
     type: 'edit' | 'detail' | 'delete' | null;
     project: Project | null;
@@ -46,23 +49,28 @@ const DataTableProject: React.FC<DataTableProps> = ({ projects, onProjectsUpdate
       <table className="min-w-full table-auto">
         <thead>
           <tr>
-            {['Name', 'Type', 'Domain', 'Description', 'Status', 'Action'].map((col) => (
-              <th key={col} className="border-b px-4 py-3 text-left">
-                {col}
-              </th>
-            ))}
+            {['Name', 'Type', 'Domain', 'Description', 'Status', 'Action'].map(
+              col => (
+                <th key={col} className="border-b px-4 py-3 text-left">
+                  {col}
+                </th>
+              )
+            )}
           </tr>
         </thead>
         <tbody>
-          {projects.map((project) => (
+          {projects.map(project => (
             <tr key={project.id}>
               <td className="border-b px-4 py-2">{project.name}</td>
               <td className="border-b px-4 py-2">{project.type}</td>
               <td className="border-b px-4 py-2">{project.domain}</td>
               <td className="border-b px-4 py-2">{project.description}</td>
               <td
-                className={`border-b px-4 py-2 ${project.status === 'Active' ? 'text-green-500' : 'text-red-600'
-                  }`}
+                className={`border-b px-4 py-2 ${
+                  project.status === 'Active'
+                    ? 'text-green-500'
+                    : 'text-red-600'
+                }`}
               >
                 {project.status}
               </td>

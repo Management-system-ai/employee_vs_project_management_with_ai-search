@@ -1,10 +1,17 @@
 import Image from 'next/image';
-import React from 'react';
+import React, { useState } from 'react';
 import { AiOutlineEye, AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai';
 import ProfileIcon from '@/resources/images/icons/icon profile.png';
 import { softDeleteEmployee } from '@/app/server-actions/supabase/server';
+import UpdateEmployeeModal from '../modal/employee/UpdateEmployee';
+import { DataEmployeeTableProps, Employee } from '@/types/types';
 
 const DataTableEmployee: React.FC<DataEmployeeTableProps> = ({ employees }) => {
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
+    null
+  );
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const handleDelete = async (id: string) => {
     try {
       await softDeleteEmployee(id);
@@ -12,13 +19,17 @@ const DataTableEmployee: React.FC<DataEmployeeTableProps> = ({ employees }) => {
       console.error('Error deleting employee:', error);
     }
   };
+  const handleUpdate = (employee: Employee) => {
+    setSelectedEmployee(employee);
+    setIsModalOpen(true);
+  };
   return (
-    <div className="mt-6 max-h-96 overflow-y-auto rounded-md bg-white">
-      <table className="min-w-full table-auto">
+    <>
+      <table className="mt-6 min-w-full table-auto rounded-md bg-white">
         <thead>
           <tr>
             {['name', 'email', 'age', 'role', 'status', 'action'].map(col => (
-              <th key={col} className="border-b px-4 py-3 text-left">
+              <th key={col} className="border-b px-4 py-3 text-center">
                 {col.charAt(0).toUpperCase() + col.slice(1)}
               </th>
             ))}
@@ -28,12 +39,13 @@ const DataTableEmployee: React.FC<DataEmployeeTableProps> = ({ employees }) => {
           {employees.map((employee, index) => (
             <tr key={index} className="text-center">
               <td className="border-b px-4 py-2">
-                <div className="flex items-center text-left">
+                <div className="flex items-center text-center">
                   <Image
                     src={employee.avatar ? employee.avatar : ProfileIcon}
                     alt={employee.name}
-                    width={30}
-                    height={30}
+                    width={50}
+                    height={50}
+                    className="rounded-full"
                   />
                   <span className="ml-2">{employee.name}</span>
                 </div>
@@ -48,10 +60,13 @@ const DataTableEmployee: React.FC<DataEmployeeTableProps> = ({ employees }) => {
               </td>
               <td className="border-b px-4 py-2 text-center">
                 <div className="flex justify-center space-x-3">
-                  <button className="text-gray-800">
+                  <button className="text-blue-500">
                     <AiOutlineEye />
                   </button>
-                  <button className="text-blue-500">
+                  <button
+                    className="text-blue-500"
+                    onClick={() => handleUpdate(employee)}
+                  >
                     <AiOutlineEdit />
                   </button>
                   <button
@@ -66,7 +81,12 @@ const DataTableEmployee: React.FC<DataEmployeeTableProps> = ({ employees }) => {
           ))}
         </tbody>
       </table>
-    </div>
+      <UpdateEmployeeModal
+        employee={selectedEmployee}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
+    </>
   );
 };
 
