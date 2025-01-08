@@ -20,7 +20,7 @@ const Pagination: React.FC<PaginationProps> = ({
   };
 
   return (
-    <div className="mt-4 flex items-center justify-center gap-6">
+    <div className="mt-2 flex items-center justify-center gap-6">
       <button
         onClick={handlePrevious}
         disabled={currentPage === 1}

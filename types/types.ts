@@ -1,4 +1,5 @@
 import { Phase } from '@prisma/client';
+import { EmployeeRole } from '@prisma/client';
 interface Project {
   id: string;
   name: string;
@@ -7,7 +8,7 @@ interface Project {
   description: string;
   startDate: string;
   endDate: string;
-  status: string;
+  status: boolean;
   updatedAt?: string;
 }
 interface Employee {
@@ -31,9 +32,16 @@ interface Domain {
 
 interface DataTableProps {
   projects: Project[];
+  onProjectsUpdate: (updater: (prevProjects: Project[]) => Project[]) => void;
 }
 interface DataEmployeeTableProps {
   employees: Employee[];
+}
+
+interface UpdateEmployeeProps {
+  isOpen: boolean;
+  employee: Employee | null;
+  onClose: () => void;
 }
 
 interface SearchBarProps {
@@ -46,20 +54,47 @@ interface ProjectDetailProps {
   onClose: () => void;
 }
 
+interface DeleteProjectModalProps {
+  project: Project | null;
+  onClose: () => void;
+}
+
 interface Skill {
   id: string;
   name: string;
   description: string;
 }
 
-export type UpdatedPhase = Omit<
+type UpdatedPhase = Omit<
   Phase,
   'id' | 'isFinished' | 'createdAt' | 'updatedAt'
 >;
 
-export interface ModalCreatePhase {
+interface ModalCreatePhase {
   showModalDelete: boolean;
   setShowModalDelete: (value: boolean) => void;
   projectId: string;
   projectName: string;
 }
+export const Role = {
+  developer: { name: 'Developer', value: EmployeeRole.DEVELOPER },
+  teamLeader: { name: 'Team Leader', value: EmployeeRole.TEAM_LEAD },
+  designer: { name: 'Designer', value: EmployeeRole.DESIGNER },
+  tester: { name: 'QA', value: EmployeeRole.QA },
+  projectManager: { name: 'Manager', value: EmployeeRole.PROJECT_MANAGER }
+};
+
+export type {
+  Project,
+  Employee,
+  Domain,
+  DataTableProps,
+  DataEmployeeTableProps,
+  UpdateEmployeeProps,
+  SearchBarProps,
+  ProjectDetailProps,
+  Skill,
+  DeleteProjectModalProps,
+  ModalCreatePhase,
+  UpdatedPhase
+};
