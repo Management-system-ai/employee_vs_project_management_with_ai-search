@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { AiOutlineEye, AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai';
+import { AiOutlineEye, AiOutlineEdit, AiOutlineDelete, AiOutlineUserAdd  } from 'react-icons/ai';
 import UpdateProjectForm from '../modal/project/UpdateProject';
 import { updateProject } from '@/app/api/apiProject/project_api';
 import { fetchDomains } from '@/app/api/domain/domain';
 import DetailProjectModal from '../modal/project/DetailProject';
+import AssignMemberProjectModal from '../modal/project/AssignMember';
 import DeleteProjectModal from '../modal/project/DeleteProject';
 import handleUpdateProject from '../modal/project/UpdateProject';
 
@@ -14,7 +15,7 @@ interface DataTableProps {
 
 const DataTableProject: React.FC<DataTableProps> = ({ projects, onProjectsUpdate }) => {
   const [modalState, setModalState] = useState<{
-    type: 'edit' | 'detail' | 'delete' | null;
+    type: 'edit' | 'detail' | 'delete' | 'assign' | null;
     project: Project | null;
   }>({ type: null, project: null });
 
@@ -68,6 +69,14 @@ const DataTableProject: React.FC<DataTableProps> = ({ projects, onProjectsUpdate
               </td>
               <td className="border-b px-4 py-2 text-center">
                 <div className="flex justify-center space-x-3">
+
+                  <button
+                    className="text-gray-800 hover:text-gray-600"
+                    onClick={() => setModalState({ type: 'assign', project })}
+                  >
+                    <AiOutlineUserAdd />
+                  </button>
+
                   <button
                     className="text-gray-800 hover:text-gray-600"
                     onClick={() => setModalState({ type: 'detail', project })}
@@ -94,9 +103,16 @@ const DataTableProject: React.FC<DataTableProps> = ({ projects, onProjectsUpdate
       </table>
 
       {/* Modals */}
+
+      {modalState.type === 'assign' && modalState.project && (
+        <AssignMemberProjectModal project={modalState.project} onClose={closeModal} />
+      )}
+
       {modalState.type === 'detail' && modalState.project && (
         <DetailProjectModal project={modalState.project} onClose={closeModal} />
       )}
+
+
       {modalState.type === 'edit' && modalState.project && (
         <UpdateProjectForm
           project={modalState.project}

@@ -97,6 +97,28 @@ export const fetchProjectActivities = async (projectId: string) => {
   }
 };
 
+// [project]/app/api/project/projects.ts
+
+export const saveAssignedMembers = async (phaseId: string, assignedMembers: string[]): Promise<void> => {
+  try {
+    const response = await fetch(`/api/projects/phases/${phaseId}/assign-members`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ members: assignedMembers }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to save assigned members for phase ${phaseId}`);
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+
 export const addProject = async (newProject: Project) => {
   try {
     const supabase = supabaseBrowserClient();
