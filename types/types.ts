@@ -1,4 +1,5 @@
 import { EmployeeRole } from '@prisma/client';
+import { USER_ROLE, BOT_ROLE } from '@/constants';
 interface Project {
   id: string;
   name: string;
@@ -71,6 +72,11 @@ export const Role = {
   projectManager: { name: 'Manager', value: EmployeeRole.PROJECT_MANAGER }
 };
 
+interface ChatHistory {
+  role: typeof USER_ROLE | typeof BOT_ROLE;
+  content: string;
+}
+
 export type {
   Project,
   Employee,
@@ -80,5 +86,6 @@ export type {
   UpdateEmployeeProps,
   SearchBarProps,
   ProjectDetailProps,
-  Skill
+  Skill,
+  ChatHistory
 };

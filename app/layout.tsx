@@ -2,6 +2,7 @@ import Sidebar from '@/components/sidebar';
 import Header from '@/components/header';
 import './globals.css';
 import { Providers } from './providers';
+import ChatBot from '@/components/ui/ChatWidget';
 export const metadata = {
   title: 'HR Management',
   description: 'Dashboard layout for the application'
@@ -21,6 +22,7 @@ export default function RootLayout({
           <Providers>
             <div className="p-6">{children}</div>
           </Providers>
+          <ChatBot />
         </div>
       </body>
     </html>
