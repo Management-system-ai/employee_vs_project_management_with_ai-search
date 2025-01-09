@@ -93,7 +93,7 @@ const DataTableProject: React.FC<DataTableProps> = ({
                 {project.status}
               </td>
               <td className="border-b px-4 py-2 text-center">
-                <div className="flex justify-center space-x-3">
+                <div className="flex space-x-3">
                   <button
                     className="text-gray-800 hover:text-gray-600"
                     onClick={() => setModalState({ type: 'detail', project })}
@@ -113,7 +113,7 @@ const DataTableProject: React.FC<DataTableProps> = ({
                     <AiOutlineDelete />
                   </button>
                   <button
-                    className="text-blue-500"
+                    className="text-blue-500 hover:text-red-500"
                     onClick={() => {
                       if (project.type) {
                         clickIconPhase(project.type, project.id, project.name);
