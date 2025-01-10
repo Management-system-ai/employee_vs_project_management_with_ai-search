@@ -5,8 +5,8 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 
 export function CreatePhaseModal({
-  showModalDelete,
-  setShowModalDelete,
+  showModalCreate,
+  setShowModalCreate,
   projectId,
   projectName
 }: ModalCreatePhase) {
@@ -40,7 +40,7 @@ export function CreatePhaseModal({
   };
 
   const handleCancel = () => {
-    setShowModalDelete(false);
+    setShowModalCreate(false);
     setPhaseCount(0);
     setForm([]);
   };
@@ -66,10 +66,11 @@ export function CreatePhaseModal({
       );
       if (createdPhases) {
         toast.success('Create phase success');
+        setShowModalCreate(false);
       } else {
         toast.error('Create phase error');
       }
-      setShowModalDelete(false);
+      setShowModalCreate(false);
       setPhaseCount(0);
       setForm([]);
     } catch (error) {
@@ -79,11 +80,11 @@ export function CreatePhaseModal({
 
   return (
     <>
-      {showModalDelete && (
+      {showModalCreate && (
         <div
           id="deleteModal"
           tabIndex={-1}
-          aria-hidden={!showModalDelete}
+          aria-hidden={!showModalCreate}
           className="h-modal fixed left-0 right-0 top-0 z-50 flex w-full items-center justify-center overflow-y-auto overflow-x-hidden md:inset-0 md:h-full"
         >
           <div

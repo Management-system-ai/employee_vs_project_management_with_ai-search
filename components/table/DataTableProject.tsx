@@ -26,7 +26,7 @@ const DataTableProject: React.FC<DataTableProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [domains, setDomains] = useState<Domain[]>([]);
-  const [showModalDelete, setShowModalDelete] = useState<boolean>(false);
+  const [showModalCreate, setShowModalCreate] = useState<boolean>(false);
   const [projectId, setProjectId] = useState<string>('');
   const [projectName, setProjectName] = useState<string>('');
   // Fetch domains when the component mounts
@@ -48,13 +48,13 @@ const DataTableProject: React.FC<DataTableProps> = ({
     setError(null);
   };
 
-  const clickIconPhase = (
+  const clickIconCreatePhase = (
     type: string,
     projectId: string,
     projectName: string
   ) => {
     if (type === 'LONG_TERM') {
-      setShowModalDelete(true);
+      setShowModalCreate(true);
       setProjectId(projectId);
       setProjectName(projectName);
     } else {
@@ -116,7 +116,7 @@ const DataTableProject: React.FC<DataTableProps> = ({
                     className="text-blue-500 hover:text-red-500"
                     onClick={() => {
                       if (project.type) {
-                        clickIconPhase(project.type, project.id, project.name);
+                        clickIconCreatePhase(project.type, project.id, project.name);
                       }
                     }}
                   >
@@ -129,8 +129,8 @@ const DataTableProject: React.FC<DataTableProps> = ({
         </tbody>
       </table>
       <CreatePhaseModal
-        showModalDelete={showModalDelete}
-        setShowModalDelete={setShowModalDelete}
+        showModalCreate={showModalCreate}
+        setShowModalCreate={setShowModalCreate}
         projectId={projectId}
         projectName={projectName}
       />

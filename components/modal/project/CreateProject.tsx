@@ -48,7 +48,7 @@ const AddProjectModal = ({
       startDate: formData.get('startDate') as string,
       endDate: formData.get('endDate') as string,
       updatedAt: new Date().toISOString(),
-      isActive: true,
+      isActive: true
     };
     try {
       await onAdd(newProject);

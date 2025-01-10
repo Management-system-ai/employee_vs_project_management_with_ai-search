@@ -1,3 +1,4 @@
+import { UpdatedPhase } from '@/types/types';
 import { supabaseBrowserClient } from '@/utils/supabaseClient';
 import {
   Employees,
@@ -181,7 +182,7 @@ export const deleteProjectSkill = async (id: string) => {
 };
 
 // Phases CRUD Actions
-export const createPhase = async (phase: Phase) => {
+export const createPhase = async (phase: UpdatedPhase) => {
   const { data, error } = await supabase.from('Phase').insert(phase).single();
   if (error) throw error;
   return data;
@@ -197,18 +198,22 @@ export const updatePhase = async (
   id: string,
   updatedFields: Partial<Phase>
 ) => {
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('Phase')
     .update(updatedFields)
     .eq('id', id);
-  if (error) throw error;
-  return data;
+  if (error) {
+    return false;
+  }
+  return true;
 };
 
 export const deletePhase = async (id: string) => {
-  const { data, error } = await supabase.from('Phase').delete().eq('id', id);
-  if (error) throw error;
-  return data;
+  const { error } = await supabase.from('Phase').delete().eq('id', id);
+  if (error) {
+    return false;
+  }
+  return true;
 };
 
 // Domains CRUD Actions
@@ -272,12 +277,14 @@ export const updateEmployeeProject = async (
 };
 
 export const deleteEmployeeProject = async (id: string) => {
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('EmployeeProjects')
     .delete()
-    .eq('id', id);
-  if (error) throw error;
-  return data;
+    .eq('phaseId', id);
+  if (error) {
+    return false;
+  }
+  return true;
 };
 
 // Generic Helper for CRUD Actions (Optional)

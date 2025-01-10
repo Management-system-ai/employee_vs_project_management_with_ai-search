@@ -70,11 +70,25 @@ type UpdatedPhase = Omit<
   'id' | 'isFinished' | 'createdAt' | 'updatedAt'
 >;
 
+type UpdateModalPhase = Omit<
+  Phase,
+  'id' | 'isFinished' | 'createdAt' | 'updatedAt' | 'projectId'
+>;
+type UpdatePhase = Omit<
+  Phase,
+  'isFinished' | 'createdAt' | 'updatedAt' | 'projectId'
+>;
 interface ModalCreatePhase {
-  showModalDelete: boolean;
-  setShowModalDelete: (value: boolean) => void;
+  showModalCreate: boolean;
+  setShowModalCreate: (value: boolean) => void;
   projectId: string;
   projectName: string;
+}
+
+interface ModalUpdatePhase {
+  showModalUpdate: boolean;
+  setShowModalUpdate: (value: boolean) => void;
+  phase: Phase;
 }
 export const Role = {
   developer: { name: 'Developer', value: EmployeeRole.DEVELOPER },
@@ -96,5 +110,8 @@ export type {
   Skill,
   DeleteProjectModalProps,
   ModalCreatePhase,
-  UpdatedPhase
+  UpdatedPhase,
+  ModalUpdatePhase,
+  UpdateModalPhase,
+  UpdatePhase
 };

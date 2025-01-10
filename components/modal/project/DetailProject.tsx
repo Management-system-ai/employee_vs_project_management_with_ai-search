@@ -2,7 +2,16 @@ import {
   fetchProjectActivities,
   fetchProjectPhases
 } from '@/app/api/project/projects';
+import {
+  deletePhase,
+  deleteEmployeeProject
+} from '@/app/server-actions/supabase/client';
+import { UpdatePhaseModal } from '@/components/modal/phase/UpdatePhase';
+import { ProjectDetailProps, UpdatePhase } from '@/types/types';
+import { Phase } from '@prisma/client';
 import React, { useEffect, useState } from 'react';
+import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
+import { toast } from 'react-toastify';
 
 const DetailProjectModal: React.FC<ProjectDetailProps> = ({
   project,
@@ -11,6 +20,36 @@ const DetailProjectModal: React.FC<ProjectDetailProps> = ({
   const [activeTab, setActiveTab] = useState('information');
   const [tabData, setTabData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [showModalUpdate, setShowModalUpdate] = useState<boolean>(false);
+  const [phase, setPhase] = useState<UpdatePhase>({
+    id: '',
+    name: '',
+    description: '',
+    startDate: new Date(),
+    endDate: new Date()
+  });
+  const handleModalUpdate = async (phase: Phase) => {
+    setShowModalUpdate(true);
+    setPhase(phase);
+  };
+  const handleDeletePhase = async (phaseId: string, phaseName: string) => {
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete phase ${phaseName} ?`
+    );
+    if (!confirmDelete) return;
+    try {
+      const response = await deleteEmployeeProject(phaseId);
+      const result = await deletePhase(phaseId);
+      if (result) {
+        toast.success('Delete phase successful');
+      } else {
+        toast.error('Failed to delete phase');
+      }
+    } catch (error) {
+      toast.error('Error deleting phase');
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     if (project == undefined) return;
@@ -93,12 +132,13 @@ const DetailProjectModal: React.FC<ProjectDetailProps> = ({
                     <th className="p-2 text-left">Duration</th>
                     <th className="p-2 text-left">Status</th>
                     <th className="p-2 text-left">Members</th>
+                    <th className="p-2 text-left">Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {tabData.map((phase, index) => (
                     <tr key={index} className="space-y-2">
-                      <td className="p-2 text-left">{phase.phaseName}</td>
+                      <td className="p-2 text-left">{phase.name}</td>
                       <td className="p-2 text-left">
                         {new Date(phase.startDate).toLocaleString('en-GB', {
                           day: '2-digit',
@@ -139,11 +179,36 @@ const DetailProjectModal: React.FC<ProjectDetailProps> = ({
                           </ul>
                         )}
                       </td>
+                      <td>
+                        <div className="flex space-x-3">
+                          <button
+                            className="text-blue-500 hover:text-blue-700"
+                            onClick={() => {
+                              handleModalUpdate(phase);
+                            }}
+                          >
+                            <AiOutlineEdit />
+                          </button>
+                          <button
+                            className="text-red-500 hover:text-red-700"
+                            onClick={() => {
+                              handleDeletePhase(phase.id, phase.name);
+                            }}
+                          >
+                            <AiOutlineDelete />
+                          </button>
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             )}
+            <UpdatePhaseModal
+              showModalUpdate={showModalUpdate}
+              setShowModalUpdate={setShowModalUpdate}
+              phase={phase}
+            />
           </div>
         );
       case 'activity':
