@@ -1,5 +1,6 @@
 import { createEmployee } from '@/app/api/employees/employee_api';
 import { fetchSkill } from '@/app/api/skills/skill_api';
+import { Skill } from '@/types/types';
 import React, { useEffect, useState } from 'react';
 
 const CreateEmployeeModal: React.FC = () => {

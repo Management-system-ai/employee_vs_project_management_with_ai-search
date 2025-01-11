@@ -3,7 +3,7 @@ import { AiOutlineEye, AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai';
 import UpdateProjectForm from '../modal/project/UpdateProject';
 import { fetchDomains } from '@/app/api/domain/domain';
 import DetailProjectModal from '../modal/project/DetailProject';
-import { DataTableProps, Project } from '@/types/types';
+import { Domain, Project } from '@/types/types';
 import DeleteProjectModal from '../modal/project/DeleteProject';
 import handleUpdateProject from '../modal/project/UpdateProject';
 
@@ -67,7 +67,7 @@ const DataTableProject: React.FC<DataTableProps> = ({
               <td className="border-b px-4 py-2">{project.description}</td>
               <td
                 className={`border-b px-4 py-2 ${
-                  project.status === 'Active'
+                  project.status === true
                     ? 'text-green-500'
                     : 'text-red-600'
                 }`}

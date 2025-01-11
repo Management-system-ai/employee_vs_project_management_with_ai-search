@@ -113,9 +113,8 @@ const DetailProjectModal: React.FC<ProjectDetailProps> = ({
                       </td>
                       <td>
                         <span
-                          className={`font-medium ${
-                            phase.status ? 'text-green-500' : 'text-red-500'
-                          }`}
+                          className={`font-medium ${phase.status ? 'text-green-500' : 'text-red-500'
+                            }`}
                         >
                           {phase.status ? 'Finished' : 'Not Finished'}
                         </span>
@@ -154,22 +153,26 @@ const DetailProjectModal: React.FC<ProjectDetailProps> = ({
             ) : (
               <div>
                 {tabData.map((activity, index) => (
-                  <p className="p-2" key={index}>
-                    <span className="text-blue-500">{activity.employee}</span> -{' '}
-                    <span className="text-green-600"> {activity.action} </span>
-                    in
-                    <span> {activity.phase}</span> phase - at{' '}
-                    <span className="text-gray-500">
-                      {new Date(activity.createdAt).toLocaleString('en-GB', {
-                        hour: '2-digit',
-                        minute: '2-digit',
+                  <p className="p-2 text-sm border-b border-gray-200" key={index}>
+                    <span className="font-semibold text-blue-600">{activity.employee+" "}</span>
+                    <span className={`p-1/2 px-2 text-xs font-medium badge ${activity.action ? "join" : "leave"}`}>
+                      {activity.action ? "Join" : "Leave"}
+                    </span>
+                    <span className="mx-2 text-gray-500">in</span>
+                    <span className="font-medium text-amber-500 p-1/2 text-sm rounded-full">{activity.phase}</span>
+                    <span className="mx-2 text-gray-500">at</span>
+                    <span className="text-gray-700">
+                      {new Date(activity.createdAt).toLocaleString("en-GB", {
+                        hour: "2-digit",
+                        minute: "2-digit",
                         hour12: true,
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric'
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
                       })}
                     </span>
                   </p>
+
                 ))}
               </div>
             )}
