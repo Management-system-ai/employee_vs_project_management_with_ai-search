@@ -51,9 +51,15 @@ export const updateEmployeeSkill = async (
   id: string,
   updatedFields: Partial<EmployeeSkills>
 ) => await prisma.employeeSkills.update({ where: { id }, data: updatedFields });
-export const deleteEmployeeSkill = async (id: string) =>
+export const deleteEmployeeSkill = async (id: string ) =>
   await prisma.employeeSkills.delete({ where: { id } });
-export const getEmployeeSkillsById = async (employeeId: string) =>
+
+export const deleteEmployeeSkillsByEmployeeId = async (employeeId: string) =>
+  await prisma.employeeSkills.deleteMany({
+    where: { employeeId },
+  });
+
+export const getEmployeeSkillsById = async (employeeId: string | undefined) =>
   await prisma.employeeSkills.findMany({
     where: { employeeId: employeeId },
     select: {

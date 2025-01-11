@@ -1,3 +1,4 @@
+import { EmployeeRole } from '@prisma/client';
 interface Project {
   id: string;
   name: string;
@@ -9,18 +10,18 @@ interface Project {
   status: boolean;
   updatedAt?: string;
 }
-interface Employee {
+export interface Employee {
   id?: string;
   name: string;
   email: string;
   role: string;
   status: boolean;
-  age?: number;
+  dateOfBirth?:  string;
   avatar: string;
   isActive?: boolean;
   createAt?: string;
   updateAt?: string;
-  joiningDate?: string;
+  joiningDate?: string ;
 }
 
 interface Domain {
@@ -35,6 +36,11 @@ interface DataEmployeeTableProps {
   employees: Employee[];
 }
 
+interface UpdateEmployeeProps {
+  employee: Employee | null;
+  onCloseUpdate: () => void;
+}
+
 interface SearchBarProps {
   onSearch: (query: string) => void;
   placeholder: string;
@@ -45,16 +51,44 @@ interface ProjectDetailProps {
   onClose: () => void;
 }
 
-interface EmployeeDetailProps {
+export interface EmployeeDetailProps {
   employee: Employee | null;
+  onCloseDetail: () => void;
 }
+
 interface DeleteProjectModalProps {
   project: Project | null;
   onClose: () => void;
 }
 
-interface Skill {
-  id: string;
+export type Skill =  {
   name: string;
-  description: string;
-}
+  isActive: boolean;
+  id: string;
+  description: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+
+export const Role = {
+  developer: { name: 'Developer', value: EmployeeRole.DEVELOPER },
+  teamLeader: { name: 'Team Leader', value: EmployeeRole.TEAM_LEAD },
+  designer: { name: 'Designer', value: EmployeeRole.DESIGNER },
+  tester: { name: 'QA', value: EmployeeRole.QA },
+  projectManager: { name: 'Manager', value: EmployeeRole.PROJECT_MANAGER }
+};
+
+
+
+export type {
+  Project,
+  Employee,
+  Domain,
+  DataTableProps,
+  DataEmployeeTableProps,
+  UpdateEmployeeProps,
+  SearchBarProps,
+  ProjectDetailProps,
+  Skill
+};

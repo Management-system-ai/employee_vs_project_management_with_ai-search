@@ -3,16 +3,29 @@ import {
     fetchEmPloyeeById
 } from '@/app/api/employees/employee_api';
 import { getEmployeeSkillsById } from '@/app/server-actions/prisma';
+import Image, { StaticImageData } from 'next/image';
 import React, { useEffect, useState } from 'react';
+import { EmployeeDetailProps } from "@/types/types";
+import getImageSrc from '@/app/api/supabase/handleRetrive';
+import ProfileIcon from '@/resources/images/icons/icon profile.png';
+
 
 const DetailEmployeeModal: React.FC<EmployeeDetailProps> = ({
     employee,
-    onClose
+    onCloseDetail
 }) => {
     const [activeTab, setActiveTab] = useState('detail');
     const [tabData, setTabData] = useState<any[]>([]);
     const [skills, setSkills] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
+
+    function getAvatar(avatar: string): string | StaticImageData {
+        if (avatar) {
+            const publicUrl = getImageSrc(avatar)?.publicUrl;
+            return publicUrl || ProfileIcon;
+        }
+        return ProfileIcon;
+    }
 
     useEffect(() => {
         if (employee == undefined) return;
@@ -20,14 +33,13 @@ const DetailEmployeeModal: React.FC<EmployeeDetailProps> = ({
         let skillUser: any = [];
         const loadData = async () => {
             setLoading(true);
-         
+
             switch (activeTab) {
                 case 'detail':
                     if (employee.id) {
                         data = await fetchEmPloyeeById(employee.id);
                         skillUser = await getEmployeeSkillsById(employee.id);
                     }
-                    console.log(skills)
                     break;
                 case 'activity':
                     data = await fetchEmployeeActivity(employee.id);
@@ -60,45 +72,74 @@ const DetailEmployeeModal: React.FC<EmployeeDetailProps> = ({
         switch (activeTab) {
             case 'detail':
                 return (
-                    <div className="bg-white">
-                        <div className="space-y-2">
-                            <div className="flex">
-                                <span className="font-lg w-1/6 font-bold">Avatar:</span>
-                                <span>{employee.avatar}</span>
-                            </div>
-                            <div className="flex">
-                                <span className="font-lg w-1/6 font-bold">Name:</span>
-                                <span>{employee.name}</span>
-                            </div>
-                            <div className="flex">
-                                <span className="font-lg w-1/6 font-bold">Email:</span>
-                                <span>{employee.email}</span>
-                            </div>
-                            <div className="flex">
-                                <span className="font-lg w-1/6 font-bold">Joining Date:</span>
-                                {employee.joiningDate
-                                    ? new Date(employee.joiningDate).toLocaleDateString("en-GB")
-                                    : "N/A"}
-                            </div>
-                            <div className="flex">
-                                <span className="font-lg w-1/6 font-bold">Role:</span>
-                                <span>{employee.role}</span>
-                            </div>
-                            <div className="flex">
-                                <span className="font-lg w-1/6 font-bold">Skills:</span>
-                                <div className="w-5/6 space-y-1">
-                                    {skills && skills.length > 0 ? (
-                                        skills.map((skill, index) => (
-                                            <span
-                                                key={index}
-                                                className="inline-block bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded mr-2"
-                                            >
-                                                {skill.skill.name}
-                                            </span>
-                                        ))
-                                    ) : (
-                                        <span>No skills added</span>
-                                    )}
+                    <div className="bg-white flex">
+                        {/* Phần Avatar */}
+                        <div className="w-1/5 flex items-center justify-center p-4">
+                            <Image
+                                src={getAvatar(employee.avatar)}
+                                alt={employee.name}
+                                width={100}
+                                height={100}
+                                className="rounded-full"
+                            />
+                        </div>
+
+                        {/* Phần thông tin */}
+                        <div className="w-4/5 p-4">
+                            <div className="space-y-2">
+                                <div className="flex">
+                                    <span className="font-lg w-1/4 font-bold">Day of Birth:</span>
+                                    <span>{employee.dateOfBirth
+                                        ? new Date(employee.dateOfBirth).toLocaleDateString("en-GB")
+                                        : "N/A"}</span>
+                                </div>
+                                <div className="flex">
+                                    <span className="font-lg w-1/4 font-bold">Name:</span>
+                                    <span>{employee.name}</span>
+                                </div>
+                                <div className="flex">
+                                    <span className="font-lg w-1/4 font-bold">Joining Date:</span>
+                                    {employee.joiningDate
+                                        ? new Date(employee.joiningDate).toLocaleDateString("en-GB")
+                                        : "N/A"}
+                                </div>
+                                <div className="flex">
+                                    <span className="font-lg w-1/4 font-bold">Role:</span>
+                                    <span>{employee.role}</span>
+                                </div>
+                                <div className="flex items-center">
+                                    <span className="font-lg w-1/4 font-bold">Email:</span>
+                                    <div className="flex items-center w-3/4">
+                                        <span
+                                            className="truncate block w-full max-w-md"
+                                            title={employee.email} // Hiển thị email đầy đủ khi hover
+                                        >
+                                            {employee.email}
+                                        </span>
+                                        <button
+                                            onClick={() => navigator.clipboard.writeText(employee.email)}
+                                            className="ml-2 px-2 py-1 text-sm font-medium bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"
+                                        >
+                                            Copy
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="flex">
+                                    <span className="font-lg w-1/4 font-bold">Skills:</span>
+                                    <div className="w-3/4 space-y-1">
+                                        {skills && skills.length > 0 ? (
+                                            skills.map((skill, index) => (
+                                                <span
+                                                    key={index}
+                                                    className="inline-block bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded mr-2"
+                                                >
+                                                    {skill.skill.name}
+                                                </span>
+                                            ))
+                                        ) : (
+                                            <span>No skills added</span>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -148,12 +189,12 @@ const DetailEmployeeModal: React.FC<EmployeeDetailProps> = ({
     };
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="h-1/2 w-1/2 rounded-lg bg-white p-6">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 min-h-[400px] h-auto">
+            <div className=" w-1/2 rounded-lg bg-white p-6">
                 <div className="flex justify-between">
                     <h2 className="mb-4 text-xl font-bold">Employee Details</h2>
                     <button
-                        onClick={onClose}
+                        onClick={onCloseDetail}
                         className="flex h-8 w-8 items-center justify-center rounded-full bg-red-600 text-white"
                     >
                         <svg
