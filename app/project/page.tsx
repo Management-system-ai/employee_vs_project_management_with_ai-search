@@ -5,6 +5,7 @@ import DataTableProject from '@/components/table/DataTableProject';
 import Pagination from '@/components/table/Pagination';
 import AddProjectModal from '@/components/modal/project/CreateProject';
 import { addProject, fetchProjects } from '../api/project/projects';
+import { Project } from '@/types/types';
 
 const ProjectPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);

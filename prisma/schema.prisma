@@ -32,14 +32,14 @@ enum EmployeeRole {
 model Employees {
   id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name        String       @db.VarChar(255)
-  age         Int?
+  dateOfBirth DateTime?
   email       String       @unique @db.VarChar(255)
   avatar      String?      @db.Text
   role        EmployeeRole @default(DEVELOPER)
   joiningDate DateTime     @default(now())
   isActive    Boolean      @default(true)
   createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  updatedAt   DateTime     @default(now()) @updatedAt
 
   employeeSkills   EmployeeSkills[]
   employeeProjects EmployeeProjects[]
@@ -51,7 +51,7 @@ model Skills {
   description String?  @db.Text
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime @default(now()) @updatedAt
 
   employeeSkills EmployeeSkills[]
   ProjectSkills  ProjectSkills[]
@@ -77,7 +77,7 @@ model Projects {
   startDate   DateTime?
   endDate     DateTime?
   createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  updatedAt   DateTime    @default(now()) @updatedAt
 
   domain           Domain             @relation(fields: [domainId], references: [id])
   phases           Phase[]
@@ -91,7 +91,7 @@ model ProjectSkills {
   projectId   String   @db.Uuid
   proficiency Int?
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime @default(now()) @updatedAt
   projects    Projects @relation(fields: [projectId], references: [id])
   skills      Skills   @relation(fields: [skillId], references: [id])
 }
@@ -105,7 +105,7 @@ model Phase {
   startDate   DateTime
   endDate     DateTime
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime @default(now()) @updatedAt
 
   project          Projects           @relation(fields: [projectId], references: [id])
   employeeProjects EmployeeProjects[]
@@ -117,7 +117,7 @@ model Domain {
   description String?  @db.Text
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime @default(now()) @updatedAt
 
   projects Projects[]
 }
@@ -131,7 +131,7 @@ model EmployeeProjects {
   timestamp  DateTime
   isActive   Boolean  @default(true)
   createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  updatedAt  DateTime @default(now()) @updatedAt
 
   employee Employees @relation(fields: [employeeId], references: [id])
   project  Projects  @relation(fields: [projectId], references: [id])
