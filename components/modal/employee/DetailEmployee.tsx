@@ -73,7 +73,6 @@ const DetailEmployeeModal: React.FC<EmployeeDetailProps> = ({
             case 'detail':
                 return (
                     <div className="bg-white flex">
-                        {/* Phần Avatar */}
                         <div className="w-1/5 flex items-center justify-center p-4">
                             <Image
                                 src={getAvatar(employee.avatar)}
@@ -84,7 +83,6 @@ const DetailEmployeeModal: React.FC<EmployeeDetailProps> = ({
                             />
                         </div>
 
-                        {/* Phần thông tin */}
                         <div className="w-4/5 p-4">
                             <div className="space-y-2">
                                 <div className="flex">
@@ -112,7 +110,7 @@ const DetailEmployeeModal: React.FC<EmployeeDetailProps> = ({
                                     <div className="flex items-center w-3/4">
                                         <span
                                             className="truncate block w-full max-w-md"
-                                            title={employee.email} // Hiển thị email đầy đủ khi hover
+                                            title={employee.email} 
                                         >
                                             {employee.email}
                                         </span>

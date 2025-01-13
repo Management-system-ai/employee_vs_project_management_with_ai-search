@@ -65,10 +65,7 @@ const DetailProjectModal: React.FC<ProjectDetailProps> = ({
                 <span className="font-lg w-1/6 font-bold">Type:</span>
                 <span>{project.type}</span>
               </div>
-              <div className="flex">
-                <span className="font-lg w-1/6 font-bold">Description:</span>
-                <span>{project.description}</span>
-              </div>
+              
               <div className="flex">
                 <span className="font-lg w-1/6 font-bold">Status:</span>
                 <span
@@ -76,6 +73,10 @@ const DetailProjectModal: React.FC<ProjectDetailProps> = ({
                 >
                   {project.status}
                 </span>
+              </div>
+              <div className="flex">
+                <span className="font-lg w-1/6 font-bold">Description:</span>
+                <span>{project.description}</span>
               </div>
             </div>
           </div>
@@ -113,10 +114,10 @@ const DetailProjectModal: React.FC<ProjectDetailProps> = ({
                       </td>
                       <td>
                         <span
-                          className={`font-medium ${phase.status ? 'text-green-500' : 'text-red-500'
+                          className={`rounded-full px-3 py-1 text-sm ${phase.status ? 'bg-yellow-200 text-green-500' : 'bg-yellow-200 text-blue-500'
                             }`}
                         >
-                          {phase.status ? 'Finished' : 'Not Finished'}
+                          {phase.status ? 'Completed' : 'In progress'}
                         </span>
                       </td>
                       <td className="p-2 text-left">
@@ -212,19 +213,19 @@ const DetailProjectModal: React.FC<ProjectDetailProps> = ({
         {/* Tabs */}
         <div className="mb-4 flex space-x-4">
           <button
-            className={`px-4 text-lg ${activeTab === 'information' ? 'border-b-2 border-red-600 text-red-600' : ''}`}
+            className={`px-1 text-lg ${activeTab === 'information' ? 'border-b-2 border-red-600 text-red-600' : ''}`}
             onClick={() => setActiveTab('information')}
           >
             Information
           </button>
           <button
-            className={`px-4 text-lg ${activeTab === 'phase' ? 'border-b-2 border-red-600 text-red-600' : ''}`}
+            className={`px-1 text-lg ${activeTab === 'phase' ? 'border-b-2 border-red-600 text-red-600' : ''}`}
             onClick={() => setActiveTab('phase')}
           >
             Phase
           </button>
           <button
-            className={`px-4 text-lg ${activeTab === 'activity' ? 'border-b-2 border-red-600 text-red-600' : ''}`}
+            className={`px-1 text-lg ${activeTab === 'activity' ? 'border-b-2 border-red-600 text-red-600' : ''}`}
             onClick={() => setActiveTab('activity')}
           >
             Activity

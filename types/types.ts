@@ -92,3 +92,30 @@ export type {
   ProjectDetailProps,
   Skill
 };
+
+export interface Activity {
+  phases: {
+    projectName: string;
+    phaseName: string;
+    startDate: Date;
+    endDate: Date;
+    isFinished: boolean;
+    activities: {
+      employeeName: string;
+      employeeRole: string;
+      employeeAvatar: string | null;
+      action: string;
+      timestamp: Date;
+    }[];
+  }[];
+}
+
+export interface TopSkill {
+  skillName: string;
+  employeeCount: number;
+}
+
+export interface TopSkillsData {
+  totalSkills: number;
+  topSkills: TopSkill[];
+}

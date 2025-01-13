@@ -112,6 +112,176 @@ export const updateEmployeeProject = async (
   await prisma.employeeProjects.update({ where: { id }, data: updatedFields });
 export const deleteEmployeeProject = async (id: string) =>
   await prisma.employeeProjects.delete({ where: { id } });
+
+export const fetchEmployeeRolesDistribution = async () => {
+  try {
+    const roleDistribution = await prisma.employees.groupBy({
+      by: ['role'],
+      where: {
+        isActive: true, 
+      },
+      _count: {
+        role: true,
+      },
+    });
+    return roleDistribution.map((item) => ({
+      role: item.role,
+      count: item._count.role,
+    }));
+  } catch (error) {
+    console.error('Error fetching role distribution:', error);
+    throw error;
+  }
+};
+
+
+export const fetchProjectData = async () => {
+  try {
+    const totalProjects = await prisma.projects.count({
+      where: { isActive: true },
+    });
+
+    const projectDistribution = await prisma.projects.groupBy({
+      by: ['domainId'],
+      where: { isActive: true },
+      _count: { domainId: true },
+    });
+
+    const domainDetails = await Promise.all(
+      projectDistribution.map(async ({ domainId, _count }) => {
+        const domain = await prisma.domain.findUnique({
+          where: { id: domainId },
+        });
+        return {
+          domain: domain?.name || 'Unknown',
+          count: _count.domainId,
+        };
+      })
+    );
+
+    return { totalProjects, domainDetails };
+  } catch (error) {
+    console.error('Error fetching project data:', error);
+    throw error;
+  }
+};
+export async function fetchRecentlyActivities() {
+  try {
+    const recentActivities = await prisma.employeeProjects.findMany({
+      where: {
+        isActive: true,
+      },
+      select: {
+        action: true,
+        timestamp: true,
+        employee: {
+          select: {
+            name: true,
+            role: true,
+            avatar: true,
+          },
+        },
+        project: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        phase: {
+          select: {
+            id: true,
+            name: true,
+            startDate: true,
+            endDate: true,
+            isFinished: true,
+            project: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+      take: 10,
+    });
+
+    const formattedActivities = [{
+      phases: recentActivities.map(activity => ({
+        phaseName: activity.phase.name,
+        startDate: activity.phase.startDate,
+        endDate: activity.phase.endDate,
+        isFinished: activity.phase.isFinished,
+        projectName: activity.project.name, 
+        activities: [{
+          employeeName: activity.employee.name,
+          employeeRole: activity.employee.role,
+          employeeAvatar: activity.employee.avatar,
+          action: activity.action,
+          timestamp: activity.timestamp,
+          projectName: activity.project.name,  
+        }],
+      })),
+    }];
+
+    return {
+      activities: formattedActivities,
+      activityCount: recentActivities.length,
+    };
+
+  } catch (error) {
+    console.error("Error fetching activities:", error);
+    throw new Error("Failed to fetch activities");
+  }
+}
+
+export async function fetchSkillsData() {
+  try {
+    // Get total skills count
+    const totalSkills = await prisma.skills.count({
+      where: {
+        isActive: true
+      }
+    });
+
+    // Get top 5 skills by employee count
+    const topSkills = await prisma.employeeSkills.groupBy({
+      by: ['skillId'],
+      _count: {
+        employeeId: true
+      },
+      orderBy: {
+        _count: {
+          employeeId: 'desc'
+        }
+      },
+      take: 5
+    });
+
+    // Get skill names for the top skills
+    const topSkillsWithNames = await Promise.all(
+      topSkills.map(async (skill) => {
+        const skillInfo = await prisma.skills.findUnique({
+          where: { id: skill.skillId }
+        });
+        return {
+          skillName: skillInfo?.name || 'Unknown Skill',
+          employeeCount: skill._count.employeeId
+        };
+      })
+    );
+
+    return {
+      totalSkills,
+      topSkills: topSkillsWithNames
+    };
+  } catch (error) {
+    console.error('Error fetching skills data:', error);
+    throw new Error('Failed to fetch skills data');
+  }
+}
 export const getEmployeeActivities = async (employeeId: string) =>
   await prisma.employeeProjects.findMany({
     where: { employeeId: employeeId, },

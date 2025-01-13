@@ -7,6 +7,7 @@ import DetailEmployeeModal from '@/components/modal/employee/DetailEmployee';
 import UpdateEmployeeModal from '../modal/employee/UpdateEmployee';
 import { DataEmployeeTableProps, Employee } from '@/types/types';
 import getImageSrc from '@/app/api/supabase/handleRetrive';
+import { formatRole } from '@/utils/formatRole';
 
 const DataTableEmployee: React.FC<DataEmployeeTableProps> = ({ employees }) => {
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
@@ -77,7 +78,7 @@ const DataTableEmployee: React.FC<DataEmployeeTableProps> = ({ employees }) => {
                   ? new Date(employee.dateOfBirth).toLocaleDateString("en-GB")
                   : "N/A"}
               </td>
-              <td className="border-b px-4 py-2">{employee.role}</td>
+              <td className="border-b px-4 py-2">{formatRole(employee.role)}</td>
               <td
                 className={`border-b px-4 py-2 ${employee.isActive ? 'text-green-500' : 'text-orange-500'}`}
               >
