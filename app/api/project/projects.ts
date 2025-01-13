@@ -6,8 +6,8 @@ export const fetchProjects = async () => {
     const supabase = supabaseBrowserClient();
     const { data: projects } = await supabase
       .from('Projects')
-      .select(`id, name, description, type, isActive, Domain(name)`).eq('isActive', true); 
-      
+      .select(`id, name, description, type, isActive, Domain(name)`)
+      .eq('isActive', true);
 
     const formattedProjects = projects?.map(project => ({
       id: project.id,
@@ -31,6 +31,7 @@ export const fetchProjectPhases = async (projectId: string) => {
       .from('Phase')
       .select(
         `
+        description,
         name,
         startDate,
         endDate,
@@ -52,7 +53,9 @@ export const fetchProjectPhases = async (projectId: string) => {
       .order('startDate', { ascending: true });
 
     const formattedPhases = data?.map(phase => ({
-      phaseName: phase.name,
+      id: phase.id,
+      name: phase.name,
+      description: phase.description,
       startDate: phase.startDate,
       endDate: phase.endDate,
       status: phase.isFinished,
@@ -102,32 +105,29 @@ export const addProject = async (newProject: Project) => {
     const supabase = supabaseBrowserClient();
     const { data, error } = await supabase
       .from('Projects')
-      .insert([newProject]); 
+      .insert([newProject]);
     if (error) throw error;
-    return data; 
+    return data;
   } catch (error) {
     console.error('Error adding project:', error);
-    throw error; 
+    throw error;
   }
 };
-
 
 export const deleteProject = async (projectId: string) => {
   try {
     const supabase = supabaseBrowserClient();
     const { error: projectError } = await supabase
       .from('Projects')
-      .update({isActive: false})
+      .update({ isActive: false })
       .eq('id', projectId);
 
     if (projectError) {
-      console.log('Fail to delete project',projectError);
+      console.log('Fail to delete project', projectError);
       throw new Error('Failed to delete project');
     }
-
   } catch (error) {
     console.error('Error deleting project:', error);
     throw new Error('Unexpected error deleting project');
   }
 };
-

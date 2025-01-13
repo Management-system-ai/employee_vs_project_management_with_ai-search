@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { fetchProjectPhases, deleteProject } from '@/app/api/project/projects';
+import { DeleteProjectModalProps } from '@/types/types';
 
 const DeleteProjectModal: React.FC<DeleteProjectModalProps> = ({
   project,
