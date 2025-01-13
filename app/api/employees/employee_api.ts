@@ -1,6 +1,6 @@
 import { supabaseBrowserClient } from '@/utils/supabaseClient';
 
-export const fetchEmPloyee = async (): Promise<Employee[]> => {
+export const fetchEmPloyee = async (id: string): Promise<Employee[]> => {
   try {
     const supabase = supabaseBrowserClient();
     const { data: employees } = await supabase.from('Employees').select('*');

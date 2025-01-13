@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchDomains } from '@/app/api/domain/domain';
+import { addProject } from '@/app/api/apiProject/project_api';
+import { Project,Domain } from '@/types/types';
 
 const AddProjectModal = ({
   isOpen,

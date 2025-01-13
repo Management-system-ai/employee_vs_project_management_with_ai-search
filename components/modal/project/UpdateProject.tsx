@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchDomains } from '@/app/api/domain/domain';
 import { updateProject } from '@/app/api/apiProject/project_api';
+import { Project, Domain } from '@/types/types';
 
 interface UpdateProjectFormProps {
     project: Project;
@@ -201,7 +202,7 @@ const UpdateProjectForm: React.FC<UpdateProjectFormProps> = ({
                                         onChange={() =>
                                             setUpdatedProject({
                                                 ...updatedProject,
-                                                status: true,
+                                                status: true, 
                                             })
                                         }
                                         className="h-4 w-4 text-red-600"
@@ -219,7 +220,7 @@ const UpdateProjectForm: React.FC<UpdateProjectFormProps> = ({
                                         onChange={() =>
                                             setUpdatedProject({
                                                 ...updatedProject,
-                                                status: false,
+                                                status: false, 
                                             })
                                         }
                                         className="h-4 w-4 text-red-600"
@@ -228,6 +229,7 @@ const UpdateProjectForm: React.FC<UpdateProjectFormProps> = ({
                                 </label>
                             </div>
                         </div>
+
                     </div>
 
                     {error && <div className="mt-4 text-red-500">{error}</div>}

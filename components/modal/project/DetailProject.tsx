@@ -2,6 +2,7 @@ import {
   fetchProjectActivities,
   fetchProjectPhases
 } from '@/app/api/project/projects';
+import { ProjectDetailProps } from '@/types/types';
 import React, { useEffect, useState } from 'react';
 
 const DetailProjectModal: React.FC<ProjectDetailProps> = ({

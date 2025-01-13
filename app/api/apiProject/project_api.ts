@@ -1,3 +1,4 @@
+import { Project } from '@/types/types';
 import { supabaseBrowserClient } from '@/utils/supabaseClient';
 
 export const fetchProjects = async () => {

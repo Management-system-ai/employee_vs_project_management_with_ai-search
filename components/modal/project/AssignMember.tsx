@@ -1,6 +1,7 @@
-import { fetchProjectPhases } from '@/app/api/project/projects';
+import { fetchProjectPhases, saveAssignedMembers } from '@/app/api/project/projects';
 import { fetchEmPloyee } from '@/app/api/employees/employee_api';
 import React, { useEffect, useState } from 'react';
+import { ProjectDetailProps } from '@/types/types';
 
 const AssignMemberProjectModal: React.FC<ProjectDetailProps> = ({
     project,
@@ -10,8 +11,8 @@ const AssignMemberProjectModal: React.FC<ProjectDetailProps> = ({
     const [members, setMembers] = useState<any[]>([]);
     const [phaseAssignments, setPhaseAssignments] = useState<Record<string, string[]>>({});
     const [loading, setLoading] = useState(false);
+    const [saving, setSaving] = useState(false);
 
-    // Tự động tải dữ liệu phases và members khi project thay đổi
     useEffect(() => {
         if (!project) return;
 
@@ -19,16 +20,15 @@ const AssignMemberProjectModal: React.FC<ProjectDetailProps> = ({
             setLoading(true);
             try {
                 const [phaseData, memberData] = await Promise.all([
-                    fetchProjectPhases(project.id), // Lấy danh sách phases
-                    fetchEmPloyee(project.id), // Lấy danh sách thành viên
+                    fetchProjectPhases(project.id),
+                    fetchEmPloyee(project.id),
                 ]);
-                setPhases(phaseData);
-                setMembers(memberData);
+                setPhases(phaseData || []);
+                setMembers(memberData || []);
 
-                // Khởi tạo dữ liệu assignments ban đầu (mỗi phase có danh sách riêng)
                 const initialAssignments: Record<string, string[]> = {};
-                phaseData.forEach((phase: any) => {
-                    initialAssignments[phase.id] = []; // Mỗi phase có danh sách thành viên riêng
+                phaseData?.forEach((phase: any) => {
+                    initialAssignments[phase.id] = phase.employees.map((e: any) => e.id) || [];
                 });
                 setPhaseAssignments(initialAssignments);
             } catch (error) {
@@ -37,26 +37,49 @@ const AssignMemberProjectModal: React.FC<ProjectDetailProps> = ({
                 setLoading(false);
             }
         };
-
         loadData();
     }, [project]);
 
     const handleAssignChange = (phaseId: string, memberId: string) => {
+        if (!phaseId) {
+          console.error('Invalid phaseId:', phaseId);
+          return;
+        }
+      
         setPhaseAssignments((prev) => {
-            const updatedAssignments = [...(prev[phaseId] || [])];
-            if (updatedAssignments.includes(memberId)) {
-                // Nếu đã có, loại bỏ thành viên
-                const index = updatedAssignments.indexOf(memberId);
-                updatedAssignments.splice(index, 1);
-            } else {
-                // Nếu chưa có, thêm thành viên
-                updatedAssignments.push(memberId);
-            }
-            return {
-                ...prev,
-                [phaseId]: updatedAssignments, // Cập nhật chỉ phase này
-            };
+          const updatedPhaseMembers = [...(prev[phaseId] || [])];
+      
+          if (updatedPhaseMembers.includes(memberId)) {
+            const index = updatedPhaseMembers.indexOf(memberId);
+            updatedPhaseMembers.splice(index, 1);
+          } else {
+            updatedPhaseMembers.push(memberId);
+          }
+      
+          return {
+            ...prev,
+            [phaseId]: updatedPhaseMembers,
+          };
         });
+      };
+      
+
+    const handleSave = async () => {
+        setSaving(true);
+        try {
+            const savePromises = Object.entries(phaseAssignments).map(([phaseId, members]) =>
+                saveAssignedMembers(phaseId, members)
+            );
+
+            await Promise.all(savePromises);
+            alert('Assignments saved successfully!');
+            onClose();
+        } catch (error) {
+            console.error('Error saving assignments:', error);
+            alert('Failed to save assignments.');
+        } finally {
+            setSaving(false);
+        }
     };
 
     if (!project) return null;
@@ -92,52 +115,54 @@ const AssignMemberProjectModal: React.FC<ProjectDetailProps> = ({
                         <div className="spinner-border h-8 w-8 animate-spin rounded-full border-4 border-t-blue-500" />
                     </div>
                 ) : (
-                    <table className="w-full table-fixed border-collapse border border-gray-200">
-                        <thead className="bg-gray-100">
-                            <tr>
-                                <th className="p-2 border border-gray-300 text-left">Phase Name</th>
-                                <th className="p-2 border border-gray-300 text-left">Duration</th>
-                                <th className="p-2 border border-gray-300 text-left">Status</th>
-                                <th className="p-2 border border-gray-300 text-center">Assigned To</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {phases.map((phase) => (
-                                <tr key={phase.id}>
-                                    <td className="p-2 border border-gray-300">{phase.phaseName}</td>
-                                    <td className="p-2 border border-gray-300">
-                                        {new Date(phase.startDate).toLocaleString('en-GB', {
-                                            day: '2-digit',
-                                            month: '2-digit',
-                                        })}
-                                        -{' '}
-                                        {new Date(phase.endDate).toLocaleString('en-GB', {
-                                            day: '2-digit',
-                                            month: '2-digit',
-                                            year: 'numeric',
-                                        })}
-                                    </td>
-                                    <td className="p-2 border border-gray-300">
-                                        {phase.status}
-                                    </td>
-                                    <td className="p-2 border border-gray-300 text-center">
-                                        <div className="flex flex-col">
-                                            {members.map((member) => (
-                                                <label key={member.id} className="flex items-center space-x-2">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={phaseAssignments[phase.id]?.includes(member.id)}
-                                                        onChange={() => handleAssignChange(phase.id, member.id)}
-                                                    />
-                                                    <span>{member.name}</span>
-                                                </label>
-                                            ))}
-                                        </div>
-                                    </td>
+                    <>
+                        <table className="w-full table-fixed border-collapse border border-gray-200">
+                            <thead className="bg-gray-100">
+                                <tr>
+                                    <th className="p-2 border border-gray-300 text-left">Phase Name</th>
+                                    <th className="p-2 border border-gray-300 text-left">Duration</th>
+                                    <th className="p-2 border border-gray-300 text-left">Status</th>
+                                    <th className="p-2 border border-gray-300 text-center">Assigned To</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {phases.map((phase) => (
+                                    <tr key={phase.id}>
+                                        <td className="p-2 border border-gray-300">{phase.phaseName}</td>
+                                        <td className="p-2 border border-gray-300">
+                                            {new Date(phase.startDate).toLocaleDateString()}
+                                            - {new Date(phase.endDate).toLocaleDateString()}
+                                        </td>
+                                        <td className="p-2 border border-gray-300">{phase.status}</td>
+                                        <td className="p-2 border border-gray-300 text-center">
+                                            <div className="flex flex-col">
+                                                {members.map((member) => (
+                                                    <label key={member.id} className="flex items-center space-x-2">
+                                                        <input
+                                                            type="checkbox"
+                                                            // checked={phaseAssignments[phase.id]?.includes(member.id)}
+                                                            onChange={() => handleAssignChange(phase.id, member.id)}
+                                                        />
+                                                        <span>{member.name}</span>
+                                                    </label>
+                                                ))}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+
+                        <div className="mt-4 flex justify-end">
+                            <button
+                                className={`px-4 py-2 rounded bg-blue-600 text-white ${saving && 'opacity-50'}`}
+                                onClick={handleSave}
+                                disabled={saving}
+                            >
+                                {saving ? 'Saving...' : 'Save'}
+                            </button>
+                        </div>
+                    </>
                 )}
             </div>
         </div>

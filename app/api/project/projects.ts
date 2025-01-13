@@ -100,6 +100,10 @@ export const fetchProjectActivities = async (projectId: string) => {
 // [project]/app/api/project/projects.ts
 
 export const saveAssignedMembers = async (phaseId: string, assignedMembers: string[]): Promise<void> => {
+  if (!phaseId) {
+    throw new Error('phaseId is undefined');
+  }
+
   try {
     const response = await fetch(`/api/projects/phases/${phaseId}/assign-members`, {
       method: 'POST',
@@ -117,6 +121,7 @@ export const saveAssignedMembers = async (phaseId: string, assignedMembers: stri
     throw error;
   }
 };
+
 
 
 export const addProject = async (newProject: Project) => {
