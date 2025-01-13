@@ -1,5 +1,6 @@
 import { createEmployee } from '@/app/api/employees/employee_api';
 import { fetchSkill } from '@/app/api/skills/skill_api';
+import { Skill } from '@/types/types';
 import React, { useEffect, useState } from 'react';
 
 const CreateEmployeeModal: React.FC = () => {
@@ -76,7 +77,7 @@ const CreateEmployeeModal: React.FC = () => {
     <div>
       <button
         onClick={toggleModal}
-        className="ms-2 rounded bg-red-600 px-4 py-2 text-white transition hover:bg-red-500"
+        className="ml-6 rounded bg-red-600 px-4 py-2 text-white transition hover:bg-red-500"
       >
         Create Employee
       </button>
@@ -213,7 +214,7 @@ const CreateEmployeeModal: React.FC = () => {
                   type="submit"
                   className="rounded bg-green-500 px-4 py-2 text-white transition hover:bg-green-600"
                 >
-                  Save
+                  Create
                 </button>
               </div>
             </form>

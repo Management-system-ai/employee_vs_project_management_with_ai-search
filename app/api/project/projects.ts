@@ -1,12 +1,13 @@
+import { Project } from '@/types/types';
 import { supabaseBrowserClient } from '@/utils/supabaseClient';
 
 export const fetchProjects = async () => {
   try {
     const supabase = supabaseBrowserClient();
-    console.log('Fetching projects...');
     const { data: projects } = await supabase
       .from('Projects')
-      .select(`id, name, description, type, isActive, Domain(name)`);
+      .select(`id, name, description, type, isActive, Domain(name)`)
+      .eq('isActive', true);
 
     const formattedProjects = projects?.map(project => ({
       id: project.id,
