@@ -311,3 +311,6 @@ export const deleteRecord = async (table: string, id: string) => {
   if (error) throw error;
   return data;
 };
+
+
+

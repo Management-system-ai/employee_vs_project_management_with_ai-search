@@ -42,27 +42,27 @@ const AssignMemberProjectModal: React.FC<ProjectDetailProps> = ({
 
     const handleAssignChange = (phaseId: string, memberId: string) => {
         if (!phaseId) {
-          console.error('Invalid phaseId:', phaseId);
-          return;
+            console.error('Invalid phaseId:', phaseId);
+            return;
         }
-      
+
         setPhaseAssignments((prev) => {
-          const updatedPhaseMembers = [...(prev[phaseId] || [])];
-      
-          if (updatedPhaseMembers.includes(memberId)) {
-            const index = updatedPhaseMembers.indexOf(memberId);
-            updatedPhaseMembers.splice(index, 1);
-          } else {
-            updatedPhaseMembers.push(memberId);
-          }
-      
-          return {
-            ...prev,
-            [phaseId]: updatedPhaseMembers,
-          };
+            const updatedPhaseMembers = [...(prev[phaseId] || [])];
+
+            if (updatedPhaseMembers.includes(memberId)) {
+                const index = updatedPhaseMembers.indexOf(memberId);
+                updatedPhaseMembers.splice(index, 1);
+            } else {
+                updatedPhaseMembers.push(memberId);
+            }
+
+            return {
+                ...prev,
+                [phaseId]: updatedPhaseMembers,
+            };
         });
-      };
-      
+    };
+
 
     const handleSave = async () => {
         setSaving(true);
@@ -116,42 +116,70 @@ const AssignMemberProjectModal: React.FC<ProjectDetailProps> = ({
                     </div>
                 ) : (
                     <>
-                        <table className="w-full table-fixed border-collapse border border-gray-200">
+                        <table className="w-full border-collapse border border-gray-300 shadow-sm">
                             <thead className="bg-gray-100">
                                 <tr>
-                                    <th className="p-2 border border-gray-300 text-left">Phase Name</th>
-                                    <th className="p-2 border border-gray-300 text-left">Duration</th>
-                                    <th className="p-2 border border-gray-300 text-left">Status</th>
-                                    <th className="p-2 border border-gray-300 text-center">Assigned To</th>
+                                    <th className="p-3 text-left text-sm font-semibold border-b border-gray-300">Phase Name</th>
+                                    <th className="p-3 text-left text-sm font-semibold border-b border-gray-300">Duration</th>
+                                    <th className="p-3 text-left text-sm font-semibold border-b border-gray-300">Status</th>
+                                    <th className="p-3 text-center text-sm font-semibold border-b border-gray-300">Assigned To</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {phases.map((phase) => (
-                                    <tr key={phase.id}>
-                                        <td className="p-2 border border-gray-300">{phase.phaseName}</td>
-                                        <td className="p-2 border border-gray-300">
-                                            {new Date(phase.startDate).toLocaleDateString()}
-                                            - {new Date(phase.endDate).toLocaleDateString()}
+                                    <tr key={phase.id} className="hover:bg-gray-50 transition duration-150">
+                                        {/* Phase Name */}
+                                        <td className="p-3 border-b border-gray-300 text-gray-700 font-medium">{phase.phaseName}</td>
+
+                                        {/* Duration */}
+                                        <td className="p-3 border-b border-gray-300 text-gray-600">
+                                            {new Date(phase.startDate).toLocaleDateString()} - {new Date(phase.endDate).toLocaleDateString()}
                                         </td>
-                                        <td className="p-2 border border-gray-300">{phase.status}</td>
-                                        <td className="p-2 border border-gray-300 text-center">
-                                            <div className="flex flex-col">
-                                                {members.map((member) => (
-                                                    <label key={member.id} className="flex items-center space-x-2">
-                                                        <input
-                                                            type="checkbox"
-                                                            // checked={phaseAssignments[phase.id]?.includes(member.id)}
-                                                            onChange={() => handleAssignChange(phase.id, member.id)}
-                                                        />
-                                                        <span>{member.name}</span>
-                                                    </label>
-                                                ))}
+
+                                        {/* Status */}
+                                        <td className="p-3 border-b border-gray-300">
+                                            <span
+                                                className={`inline-block px-3 py-1 text-xs font-bold text-white rounded ${phase.status === "Done"
+                                                        ? "bg-green-500"
+                                                        : phase.status === "In Progress"
+                                                            ? "bg-blue-500"
+                                                            : "bg-yellow-500"
+                                                    }`}
+                                            >
+                                                {phase.status}
+                                            </span>
+                                        </td>
+
+                                        {/* Assigned To */}
+                                        <td className="p-3 border-b border-gray-300 text-center">
+                                            {/* Dropdown */}
+                                            <div className="relative group">
+                                                <button className="px-3 py-1 bg-gray-200 rounded text-sm text-gray-600 hover:bg-gray-300">
+                                                    Select Assignee
+                                                </button>
+                                                <div className="absolute z-10 hidden group-hover:block bg-white border border-gray-300 rounded shadow-md w-48">
+                                                    {members.map((member) => (
+                                                        <div
+                                                            key={member.id}
+                                                            className="flex items-center space-x-2 px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                                                            onClick={() => handleAssignChange(phase.id, member.id)}
+                                                        >
+                                                            <img
+                                                                src={member.avatar}
+                                                                alt={member.name}
+                                                                className="w-6 h-6 rounded-full object-cover"
+                                                            />
+                                                            <span className="text-sm text-gray-700">{member.name}</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
+
 
                         <div className="mt-4 flex justify-end">
                             <button

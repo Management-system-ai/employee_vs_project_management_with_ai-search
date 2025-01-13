@@ -8,20 +8,21 @@ interface Project {
   startDate: string;
   endDate: string;
   status: boolean;
+  isActive?: boolean;
   updatedAt?: string;
 }
-interface Employee {
+export interface Employee {
   id?: string;
   name: string;
   email: string;
   role: string;
   status: boolean;
-  age?: number;
+  dateOfBirth?:  string;
   avatar: string;
   isActive?: boolean;
   createAt?: string;
   updateAt?: string;
-  joiningDate?: string;
+  joiningDate?: string ;
 }
 
 interface Domain {
@@ -37,9 +38,8 @@ interface DataEmployeeTableProps {
 }
 
 interface UpdateEmployeeProps {
-  isOpen: boolean;
   employee: Employee | null;
-  onClose: () => void;
+  onCloseUpdate: () => void;
 }
 
 interface SearchBarProps {
@@ -52,16 +52,25 @@ interface ProjectDetailProps {
   onClose: () => void;
 }
 
+export interface EmployeeDetailProps {
+  employee: Employee | null;
+  onCloseDetail: () => void;
+}
+
 interface DeleteProjectModalProps {
   project: Project | null;
   onClose: () => void;
 }
 
-interface Skill {
-  id: string;
+export type Skill =  {
   name: string;
-  description: string;
-}
+  isActive: boolean;
+  id: string;
+  description: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
 
 export const Role = {
   developer: { name: 'Developer', value: EmployeeRole.DEVELOPER },
@@ -70,6 +79,8 @@ export const Role = {
   tester: { name: 'QA', value: EmployeeRole.QA },
   projectManager: { name: 'Manager', value: EmployeeRole.PROJECT_MANAGER }
 };
+
+
 
 export type {
   Project,
@@ -82,3 +93,30 @@ export type {
   ProjectDetailProps,
   Skill
 };
+
+export interface Activity {
+  phases: {
+    projectName: string;
+    phaseName: string;
+    startDate: Date;
+    endDate: Date;
+    isFinished: boolean;
+    activities: {
+      employeeName: string;
+      employeeRole: string;
+      employeeAvatar: string | null;
+      action: string;
+      timestamp: Date;
+    }[];
+  }[];
+}
+
+export interface TopSkill {
+  skillName: string;
+  employeeCount: number;
+}
+
+export interface TopSkillsData {
+  totalSkills: number;
+  topSkills: TopSkill[];
+}

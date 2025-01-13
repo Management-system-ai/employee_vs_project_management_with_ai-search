@@ -7,6 +7,7 @@ import AssignMemberProjectModal from '../modal/project/AssignMember';
 import { DataTableProps, Project, Domain } from '@/types/types';
 import DeleteProjectModal from '../modal/project/DeleteProject';
 import handleUpdateProject from '../modal/project/UpdateProject';
+import { formatRole } from '@/utils/formatRole';
 
 interface DataTableProps {
   projects: Project[];
@@ -63,14 +64,15 @@ const DataTableProject: React.FC<DataTableProps> = ({
           {projects.map(project => (
             <tr key={project.id}>
               <td className="border-b px-4 py-2">{project.name}</td>
-              <td className="border-b px-4 py-2">{project.type}</td>
+              <td className="border-b px-4 py-2">{formatRole(project.type)}</td>
               <td className="border-b px-4 py-2">{project.domain}</td>
               <td className="border-b px-4 py-2">{project.description}</td>
               <td
-                className={`border-b px-4 py-2 ${project.status === 'Active'
-                  ? 'text-green-500'
-                  : 'text-red-600'
-                  }`}
+                className={`border-b px-4 py-2 ${
+                  project.status === true
+                    ? 'text-red-600'
+                    : 'text-green-600'
+                }`}
               >
                 {project.status}
               </td>
