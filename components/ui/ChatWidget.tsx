@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { PlusIcon, XIcon } from 'lucide-react';
-import { generateGeminiResponse } from '@/app/server-actions/gemini_service';
+import { generateGeminiResponse } from '@/app/server-actions/gemini/generateResponse';
 import { ChatHistory } from '@/types/types';
 import { USER_ROLE, BOT_ROLE } from '@/constants';
 import ReactMarkdown from 'react-markdown';
@@ -38,7 +38,7 @@ export default function ChatBot() {
   const respondToUser = async (userMessage: string) => {
     try {
       const response = await generateGeminiResponse(userMessage, messages);
-      addMessage(response.text, BOT_ROLE);
+      addMessage(response, BOT_ROLE);
     } catch (error) {
       console.error('Error generating response:', error);
     }

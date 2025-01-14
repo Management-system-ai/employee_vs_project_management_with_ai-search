@@ -3,18 +3,17 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { GoogleAICacheManager } from '@google/generative-ai/server';
 import { USER_ROLE, AI_KEY } from '@/constants';
 import { ChatHistory } from '@/types/types';
+import { SYSTEM_INSTRUCTION } from '@/constants';
 
-export const generateGeminiResponse = async (
+export const analyzeUserQuestion = async (
   userMessage: string,
   chatHistory: ChatHistory[]
 ) => {
   // Constants
-  const BOT_ERROR_MESSAGE = 'Something went wrong !!';
+  const BOT_ERROR_MESSAGE = 'Failed to analyze question';
   const MODEL_NAME = 'models/gemini-1.5-flash-002';
   const CACHE_TTL_SECONDS = 300;
-  const CACHE_DISPLAY_NAME = 'chat-conversation-cache';
-  const SYSTEM_INSTRUCTION =
-    'You are an expert assistant, please continue the conversation based on the previous context.';
+  const CACHE_DISPLAY_NAME = 'chat-analysis-question-cache';
 
   // Generation configuration
   const generationConfig = {
@@ -22,7 +21,7 @@ export const generateGeminiResponse = async (
     topP: 0.95,
     topK: 40,
     maxOutputTokens: 8192,
-    responseMimeType: 'text/plain'
+    responseMimeType: 'application/json'
   };
 
   try {
@@ -59,9 +58,10 @@ export const generateGeminiResponse = async (
       generationConfig
     });
 
-    return { text: result.response.text() };
+    const analysis = JSON.parse(result.response.text());
+    return analysis;
   } catch (error) {
-    console.error(error);
+    console.error('AI Analysis Error:', error);
     const errorMessage =
       error instanceof Error ? error.message : BOT_ERROR_MESSAGE;
     throw new Error(errorMessage);

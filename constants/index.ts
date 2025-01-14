@@ -1,3 +1,5 @@
+import OUR_SCHEMA from './schemaVariable';
+import SYSTEM_INSTRUCTION from './systemPromt';
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const DATABASE_URL = process.env.DATABASE_URL!;
@@ -14,5 +16,7 @@ export {
   SITE_URL,
   AI_KEY,
   USER_ROLE,
-  BOT_ROLE
+  BOT_ROLE,
+  OUR_SCHEMA,
+  SYSTEM_INSTRUCTION
 };

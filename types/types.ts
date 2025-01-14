@@ -77,6 +77,12 @@ interface ChatHistory {
   content: string;
 }
 
+interface QueryIntent {
+  type: 'FIND_EMPLOYEES' | 'PROJECT_ANALYSIS' | 'SKILL_ANALYSIS';
+  filters?: Record<string, any>;
+  relations?: string[];
+}
+
 export type {
   Project,
   Employee,
@@ -87,5 +93,6 @@ export type {
   SearchBarProps,
   ProjectDetailProps,
   Skill,
-  ChatHistory
+  ChatHistory,
+  QueryIntent
 };
