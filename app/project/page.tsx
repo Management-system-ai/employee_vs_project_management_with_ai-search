@@ -5,6 +5,7 @@ import DataTableProject from '@/components/table/DataTableProject';
 import Pagination from '@/components/table/Pagination';
 import AddProjectModal from '@/components/modal/project/CreateProject';
 import { addProject, fetchProjects } from '../api/project/projects';
+import { Project } from '@/types/types';
 
 const ProjectPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,7 +29,7 @@ const ProjectPage: React.FC = () => {
     const loadProjects = async () => {
       setIsLoading(true);
       try {
-        const data = await fetchProjects(); 
+        const data = await fetchProjects();
         setProjects(data);
       } catch (error) {
         console.error('Error fetching projects:', error);
@@ -87,7 +88,7 @@ const ProjectPage: React.FC = () => {
         </div>
       </div>
       {isLoading ? (
-        <div className="text-center mt-4">Loading projects...</div>
+        <div className="mt-4 text-center">Loading projects...</div>
       ) : (
         <>
           <DataTableProject projects={paginatedProjects} />

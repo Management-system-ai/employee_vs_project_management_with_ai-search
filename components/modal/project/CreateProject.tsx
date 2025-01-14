@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { fetchDomains } from '@/app/api/domain/domain';
+import { addProject } from '@/app/api/apiProject/project_api';
+import { Project, Domain } from '@/types/types';
+import { form } from '@nextui-org/theme';
 
 const AddProjectModal = ({
   isOpen,
@@ -12,6 +15,26 @@ const AddProjectModal = ({
 }) => {
   const [domains, setDomains] = useState<Domain[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [projectType, setProjectType] = useState('');
+
+  const handleTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setProjectType(event.target.value);
+    console.log('Selected project type:', event.target.value);
+  };
+
+  const handleFieldChange = (
+      index: number,
+      field: string,
+      value: string | number | Date
+    ) => {
+      const updatedForm = [...form];
+      updatedForm[index] = {
+        ...updatedForm[index],
+        [field]: value
+      };
+      setForm(updatedForm);
+    };
+  
 
   useEffect(() => {
     const loadDomains = async () => {
@@ -49,9 +72,11 @@ const AddProjectModal = ({
       endDate: formData.get('endDate') as string,
       updatedAt: new Date().toISOString(),
       isActive: true,
+
     };
     try {
       await onAdd(newProject);
+
       onClose();
     } catch (error) {
       console.error('Error submitting project:', error);
@@ -136,12 +161,15 @@ const AddProjectModal = ({
               <select
                 name="type"
                 className="w-full rounded-lg border border-gray-300 p-2"
+                value={projectType} // Ràng buộc với state
+                onChange={handleTypeChange} // Lắng nghe sự kiện thay đổi
               >
                 <option value="">Select project type</option>
                 <option value="SHORT_TERM">SHORT_TERM</option>
                 <option value="LONG_TERM">LONG_TERM</option>
               </select>
             </div>
+
             <div className="space-y-1">
               <label className="font-lg font-bold">Description</label>
               <textarea
@@ -152,6 +180,115 @@ const AddProjectModal = ({
               ></textarea>
             </div>
           </div>
+          <div className="Phase">
+            {projectType === "SHORT_TERM" && (
+              <div className="rounded border border-gray-300 bg-gray-100 p-4 text-left dark:border-gray-600 dark:bg-gray-700">
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+
+                    const newProject = {
+                      name: projectType.name || "Default Project Name", 
+                      description: projectType.description || "No description provided",
+                      type: "SHORT_TERM",
+                      startDate: projectType.startDate,
+                      endDate: projectType.endDate,
+                    };
+
+                    try {
+                      const addedProject = await addProject(newProject);
+                      console.log("Project and phase created successfully:", addedProject);
+                    } catch (error) {
+                      console.error("Error creating project and phase:", error);
+                    }
+                  }}
+                >
+                  <div className="mb-6 grid gap-6 md:grid-cols-2">
+                    <div>
+                      <label
+                        htmlFor="name"
+                        className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                      >
+                        Name
+                      </label>
+                      <input
+                        type="text"
+                        id="name"
+                        className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                        placeholder="Enter name"
+                        value={projectType.name}
+                        onChange={(e) =>
+                          handleFieldChange(projectType, "name", e.target.value)
+                        }
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="description"
+                        className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                      >
+                        Description
+                      </label>
+                      <input
+                        type="text"
+                        id="description"
+                        className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                        placeholder="Enter description"
+                        value={projectType.description}
+                        onChange={(e) =>
+                          handleFieldChange(projectType, "description", e.target.value)
+                        }
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+                        Start date
+                      </label>
+                      <input
+                        type="date"
+                        name="startDate"
+                        className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                        value={projectType.startDate}
+                        onChange={(e) =>
+                          handleFieldChange(
+                            projectType,
+                            "startDate",
+                            new Date(e.target.value)
+                          )
+                        }
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+                        End date
+                      </label>
+                      <input
+                        type="date"
+                        name="endDate"
+                        className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                        value={projectType.endDate}
+                        onChange={(e) =>
+                          handleFieldChange(
+                            projectType,
+                            "endDate",
+                            new Date(e.target.value)
+                          )
+                        }
+                        required
+                      />
+                    </div>
+                  </div>
+                </form>
+              </div>
+            )}
+          </div>
+
           <div className="mt-6 flex items-end justify-end gap-4">
             <button
               type="button"
@@ -174,3 +311,7 @@ const AddProjectModal = ({
 };
 
 export default AddProjectModal;
+function setForm(updatedForm: any[]) {
+  throw new Error('Function not implemented.');
+}
+
