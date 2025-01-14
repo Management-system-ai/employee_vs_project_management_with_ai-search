@@ -9,6 +9,7 @@ interface Project {
   startDate: string;
   endDate: string;
   status: boolean;
+  isActive?: boolean;
   updatedAt?: string;
 }
 export interface Employee {

@@ -4,7 +4,7 @@ import { supabaseBrowserClient } from '@/utils/supabaseClient';
 import uploadImage from '@/app/api/supabase/handleUpload';
 import generateHash from '@/utils/hashGen';
 
-export const fetchEmPloyee = async (): Promise<Employee[]> => {
+export const fetchEmPloyee = async (id: string): Promise<Employee[]> => {
   try {
     const supabase = supabaseBrowserClient();
     const { data: employees } = await supabase.from('Employees').select('*');

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchDomains } from '@/app/api/domain/domain';
 import { updateProject } from '@/app/api/apiProject/project_api';
-import { Domain, Project } from '@/types/types';
+import { Project, Domain } from '@/types/types';
 
 interface UpdateProjectFormProps {
   project: Project;

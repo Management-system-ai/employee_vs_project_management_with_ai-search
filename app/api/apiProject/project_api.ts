@@ -1,3 +1,4 @@
+import { Project } from '@/types/types';
 import { supabaseBrowserClient } from '@/utils/supabaseClient';
 
 export const fetchProjects = async () => {
@@ -19,12 +20,12 @@ export const addProject = async (newProject: Project) => {
     const supabase = supabaseBrowserClient();
     const { data, error } = await supabase
       .from('Projects')
-      .insert([newProject]); // POST dữ liệu vào bảng
+      .insert([newProject]); 
     if (error) throw error;
-    return data; // Trả về dữ liệu vừa thêm
+    return data; 
   } catch (error) {
     console.error('Error adding project:', error);
-    throw error; // Ném lỗi để xử lý ở nơi khác
+    throw error;
   }
 };
 

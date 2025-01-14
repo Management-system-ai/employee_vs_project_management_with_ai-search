@@ -3,7 +3,8 @@ import {
   AiOutlineEye,
   AiOutlineEdit,
   AiOutlineDelete,
-  AiFillCodepenCircle
+  AiFillCodepenCircle,
+  AiOutlineUserAdd
 } from 'react-icons/ai';
 import DetailProjectModal from '../modal/project/DetailProject';
 import { CreatePhaseModal } from '@/components/modal/phase/CreatePhase';
@@ -14,13 +15,14 @@ import { DataTableProps, Project, Domain } from '@/types/types';
 import DeleteProjectModal from '../modal/project/DeleteProject';
 import handleUpdateProject from '../modal/project/UpdateProject';
 import { formatRole } from '@/utils/formatRole';
+import AssignMemberProjectModal from '../modal/project/AssignMember';
 
 const DataTableProject: React.FC<DataTableProps> = ({
   projects,
   onProjectsUpdate
 }) => {
   const [modalState, setModalState] = useState<{
-    type: 'edit' | 'detail' | 'delete' | null;
+    type: 'edit' | 'detail' | 'delete' | 'assign' | null;
     project: Project | null;
   }>({ type: null, project: null });
 
@@ -85,16 +87,22 @@ const DataTableProject: React.FC<DataTableProps> = ({
               <td className="border-b px-4 py-2">{project.domain}</td>
               <td className="border-b px-4 py-2">{project.description}</td>
               <td
-                className={`border-b px-4 py-2 ${
-                  project.status === true
+                className={`border-b px-4 py-2 ${project.status === true
                     ? 'text-red-600'
                     : 'text-green-600'
-                }`}
+                  }`}
               >
                 {project.status}
               </td>
               <td className="border-b px-4 py-2 text-center">
                 <div className="flex space-x-3">
+                  <button
+                    className="text-gray-800 hover:text-gray-600"
+                    onClick={() => setModalState({ type: 'assign', project })}
+                  >
+                    <AiOutlineUserAdd />
+                  </button>
+
                   <button
                     className="text-gray-800 hover:text-gray-600"
                     onClick={() => setModalState({ type: 'detail', project })}
@@ -137,9 +145,16 @@ const DataTableProject: React.FC<DataTableProps> = ({
       />
 
       {/* Modals */}
+
+      {modalState.type === 'assign' && modalState.project && (
+        <AssignMemberProjectModal project={modalState.project} onClose={closeModal} />
+      )}
+
       {modalState.type === 'detail' && modalState.project && (
         <DetailProjectModal project={modalState.project} onClose={closeModal} />
       )}
+
+
       {modalState.type === 'edit' && modalState.project && (
         <UpdateProjectForm
           project={modalState.project}

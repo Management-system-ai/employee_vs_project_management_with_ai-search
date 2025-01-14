@@ -1,5 +1,6 @@
 import { Project } from '@/types/types';
 import { supabaseBrowserClient } from '@/utils/supabaseClient';
+import { toast } from 'react-toastify';
 
 export const fetchProjects = async () => {
   try {
@@ -100,19 +101,135 @@ export const fetchProjectActivities = async (projectId: string) => {
   }
 };
 
+
+export const saveAssignedMembers = async (phaseId: string, assignedMembers: string[]): Promise<{ success: boolean, message: string }> => {
+  if (!phaseId) {
+    throw new Error('phaseId is undefined');
+  }
+
+  const supabase = supabaseBrowserClient();
+
+  try {
+    // Kiểm tra phaseId hợp lệ và lấy projectId
+    const { data: phaseData, error: phaseError } = await supabase
+      .from('Phase')
+      .select('id, projectId')
+      .eq('id', phaseId);
+
+    if (phaseError) {
+      throw new Error(`Failed to validate phase ID: ${phaseError.message}`);
+    }
+
+    if (!phaseData || phaseData.length === 0) {
+      throw new Error(`Phase ID ${phaseId} does not exist in Phases table`);
+    }
+
+    const validProjectId = phaseData[0].projectId;
+
+    // Lọc các employeeId hợp lệ
+    const validEmployeeIds = assignedMembers.filter(employeeId => employeeId !== null && employeeId !== undefined);
+
+    // Lấy danh sách các employeeId đã tồn tại với phaseId
+    const { data: existingAssignments, error: fetchError } = await supabase
+      .from('EmployeeProjects')
+      .select('employeeId')
+      .eq('phaseId', phaseId);
+
+    if (fetchError) {
+      throw new Error(`Failed to fetch existing assignments: ${fetchError.message}`);
+    }
+
+    // Phân loại employeeId: đã tồn tại và chưa tồn tại
+    const existingEmployeeIds = existingAssignments.map(e => e.employeeId);
+    const newEmployeeIds = validEmployeeIds.filter(employeeId => !existingEmployeeIds.includes(employeeId));
+
+    if (newEmployeeIds.length === 1) {
+      return {
+        success: true,
+        message: 'No new employees were assigned because all employees already exist.',
+      };
+    }
+
+    // Chuẩn bị dữ liệu cần thêm mới
+    const upsertData = newEmployeeIds.map(employeeId => ({
+      phaseId,
+      employeeId,
+      projectId: validProjectId,
+      action: 'true',
+      timestamp: new Date().toISOString(),
+    }));
+
+    // Thực hiện upsert dữ liệu
+    const { data: upsertedData, error: upsertError } = await supabase
+      .from('EmployeeProjects')
+      .upsert(upsertData);
+
+    if (upsertError) {
+      throw new Error(`Failed to upsert employee data: ${upsertError.message}`);
+    }
+
+    return {
+      success: true,
+      message: `Successfully added new employees`,
+    };
+  } catch (error) {
+    console.error('Error saving assigned members:', error);
+    return {
+      success: false,
+      message: `Failed to save assignments: ${error.message}`,
+    };
+  }
+};
+
+
+
 export const addProject = async (newProject: Project) => {
   try {
     const supabase = supabaseBrowserClient();
-    const { data, error } = await supabase
+
+    console.log('Adding project:', newProject);
+
+    const { data: projectData, error: projectError } = await supabase
       .from('Projects')
-      .insert([newProject]);
-    if (error) throw error;
-    return data;
+      .insert([newProject])
+      .select('id')
+      .single();
+
+    if (projectError) {
+      console.error('Project insertion error:', projectError);
+      throw projectError;
+    }
+
+    if (newProject.type === 'SHORT_TERM' && projectData?.id) {
+      const phase = {
+        projectId: projectData.id,
+        name: newProject.name,
+        startDate: newProject.startDate || null,
+        endDate: newProject.endDate || null,
+      };
+
+      console.log('Adding phase:', phase);
+
+      const { error: phaseError } = await supabase
+        .from('Phase')
+        .insert([phase]);
+
+      if (phaseError) {
+        console.error('Phase insertion error:', phaseError);
+        throw phaseError;
+      }
+
+      console.log('Phase added successfully!');
+    }
+
+    return projectData;
   } catch (error) {
     console.error('Error adding project:', error);
     throw error;
   }
 };
+
+
 
 export const deleteProject = async (projectId: string) => {
   try {
