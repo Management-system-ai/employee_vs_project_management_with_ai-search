@@ -29,7 +29,7 @@ const ProjectPage: React.FC = () => {
     const loadProjects = async () => {
       setIsLoading(true);
       try {
-        const data = await fetchProjects(); 
+        const data = await fetchProjects();
         setProjects(data);
       } catch (error) {
         console.error('Error fetching projects:', error);
@@ -88,7 +88,7 @@ const ProjectPage: React.FC = () => {
         </div>
       </div>
       {isLoading ? (
-        <div className="text-center mt-4">Loading projects...</div>
+        <div className="mt-4 text-center">Loading projects...</div>
       ) : (
         <>
           <DataTableProject projects={paginatedProjects} />

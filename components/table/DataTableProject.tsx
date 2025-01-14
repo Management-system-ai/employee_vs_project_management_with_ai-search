@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { AiOutlineEye, AiOutlineEdit, AiOutlineDelete, AiOutlineUserAdd } from 'react-icons/ai';
+import {
+  AiOutlineEye,
+  AiOutlineEdit,
+  AiOutlineDelete,
+  AiFillCodepenCircle,
+  AiOutlineUserAdd
+} from 'react-icons/ai';
+import DetailProjectModal from '../modal/project/DetailProject';
+import { CreatePhaseModal } from '@/components/modal/phase/CreatePhase';
+import { toast } from 'react-toastify';
 import UpdateProjectForm from '../modal/project/UpdateProject';
 import { fetchDomains } from '@/app/api/domain/domain';
-import DetailProjectModal from '../modal/project/DetailProject';
-import AssignMemberProjectModal from '../modal/project/AssignMember';
 import { DataTableProps, Project, Domain } from '@/types/types';
 import DeleteProjectModal from '../modal/project/DeleteProject';
 import handleUpdateProject from '../modal/project/UpdateProject';
 import { formatRole } from '@/utils/formatRole';
-
-interface DataTableProps {
-  projects: Project[];
-  onProjectsUpdate: (updater: (prevProjects: Project[]) => Project[]) => void;
-}
+import AssignMemberProjectModal from '../modal/project/AssignMember';
 
 const DataTableProject: React.FC<DataTableProps> = ({
   projects,
@@ -26,7 +29,9 @@ const DataTableProject: React.FC<DataTableProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [domains, setDomains] = useState<Domain[]>([]);
-
+  const [showModalCreate, setShowModalCreate] = useState<boolean>(false);
+  const [projectId, setProjectId] = useState<string>('');
+  const [projectName, setProjectName] = useState<string>('');
   // Fetch domains when the component mounts
   useEffect(() => {
     const loadDomains = async () => {
@@ -44,6 +49,20 @@ const DataTableProject: React.FC<DataTableProps> = ({
   const closeModal = () => {
     setModalState({ type: null, project: null });
     setError(null);
+  };
+
+  const clickIconCreatePhase = (
+    type: string,
+    projectId: string,
+    projectName: string
+  ) => {
+    if (type === 'LONG_TERM') {
+      setShowModalCreate(true);
+      setProjectId(projectId);
+      setProjectName(projectName);
+    } else {
+      toast.error("This is project Short term. You can't create phase");
+    }
   };
 
   return (
@@ -68,17 +87,15 @@ const DataTableProject: React.FC<DataTableProps> = ({
               <td className="border-b px-4 py-2">{project.domain}</td>
               <td className="border-b px-4 py-2">{project.description}</td>
               <td
-                className={`border-b px-4 py-2 ${
-                  project.status === true
+                className={`border-b px-4 py-2 ${project.status === true
                     ? 'text-red-600'
                     : 'text-green-600'
-                }`}
+                  }`}
               >
                 {project.status}
               </td>
               <td className="border-b px-4 py-2 text-center">
-                <div className="flex justify-center space-x-3">
-
+                <div className="flex space-x-3">
                   <button
                     className="text-gray-800 hover:text-gray-600"
                     onClick={() => setModalState({ type: 'assign', project })}
@@ -104,11 +121,28 @@ const DataTableProject: React.FC<DataTableProps> = ({
                   >
                     <AiOutlineDelete />
                   </button>
+                  <button
+                    className="text-blue-500 hover:text-red-500"
+                    onClick={() => {
+                      if (project.type) {
+                        clickIconCreatePhase(project.type, project.id, project.name);
+                      }
+                    }}
+                  >
+                    <AiFillCodepenCircle />
+                  </button>
                 </div>
               </td>
             </tr>
-
-          ))}        </tbody>      </table>
+          ))}
+        </tbody>
+      </table>
+      <CreatePhaseModal
+        showModalCreate={showModalCreate}
+        setShowModalCreate={setShowModalCreate}
+        projectId={projectId}
+        projectName={projectName}
+      />
 
       {/* Modals */}
 

@@ -214,7 +214,7 @@ const CreateEmployeeModal: React.FC = () => {
                   type="submit"
                   className="rounded bg-green-500 px-4 py-2 text-white transition hover:bg-green-600"
                 >
-                  Save
+                  Create
                 </button>
               </div>
             </form>

@@ -84,7 +84,7 @@ const Sidebar = () => {
         <div className="p-2">
           <button
             onClick={handleLogout}
-            className={`group flex w-full items-center justify-center space-x-2 rounded-br-full rounded-tr-full bg-gradient-to-r bg-red-600 px-4 py-3  text-white transition-all duration-300  hover:bg-pink-600 hover:shadow-lg ${
+            className={`group flex w-full items-center justify-center space-x-2 rounded-br-full rounded-tr-full bg-red-600 bg-gradient-to-r px-4 py-3 text-white transition-all duration-300 hover:bg-pink-600 hover:shadow-lg ${
               isOpen ? 'text-base' : 'h-12 w-12'
             }`}
           >

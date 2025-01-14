@@ -1,5 +1,9 @@
+import getImageSrc from '@/app/api/supabase/handleRetrive';
 import { Activity } from '@/types/types';
 import { formatRole } from '@/utils/formatRole';
+import ProfileIcon from '@/resources/images/icons/icon profile.png';
+import Image, { StaticImageData } from 'next/image';
+
 interface ProjectListProps {
   projects: Activity[];
 }
@@ -7,6 +11,14 @@ interface ProjectListProps {
 const ProjectResponsibilityList: React.FC<ProjectListProps> = ({
   projects
 }) => {
+  function getAvatar(avatar: string): string | StaticImageData {
+    if (avatar) {
+      const publicUrl = getImageSrc(avatar)?.publicUrl;
+      return publicUrl || ProfileIcon;
+    }
+    return ProfileIcon;
+  }
+
   return (
     <div>
       <div className="mt-4 space-y-6">
@@ -50,18 +62,17 @@ const ProjectResponsibilityList: React.FC<ProjectListProps> = ({
                         key={activityIndex}
                         className="flex items-center gap-3 rounded-md bg-gray-50 p-2"
                       >
-                        {activity.employeeAvatar ? (
-                          <img
-                            src={activity.employeeAvatar}
-                            alt={activity.employeeName}
-                            className="h-8 w-8 rounded-full"
-                          />
-                        ) : (
-                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200">
-                            {activity.employeeName[0]}
-                          </div>
-                        )}
-
+                        <Image
+                          src={
+                            activity.employeeAvatar
+                              ? getAvatar(activity.employeeAvatar)
+                              : ProfileIcon
+                          }
+                          alt={activity.employeeName}
+                          width={48}
+                          height={48}
+                          className="max-h-12 min-h-12 min-w-12 max-w-12 rounded-full object-cover"
+                        />
                         <div className="flex-1">
                           <div className="font-medium text-gray-700">
                             {activity.employeeName}

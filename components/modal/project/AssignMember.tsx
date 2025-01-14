@@ -2,6 +2,7 @@ import { fetchProjectPhases, saveAssignedMembers } from '@/app/api/project/proje
 import { fetchEmPloyee } from '@/app/api/employees/employee_api';
 import React, { useEffect, useState } from 'react';
 import { ProjectDetailProps } from '@/types/types';
+import { toast } from 'react-toastify';
 
 const AssignMemberProjectModal: React.FC<ProjectDetailProps> = ({
     project,
@@ -41,46 +42,59 @@ const AssignMemberProjectModal: React.FC<ProjectDetailProps> = ({
     }, [project]);
 
     const handleAssignChange = (phaseId: string, memberId: string) => {
+        console.log('Selected Phase:', phaseId);
+        console.log('Selected Member:', memberId);
+    
         if (!phaseId) {
             console.error('Invalid phaseId:', phaseId);
             return;
         }
-
+    
         setPhaseAssignments((prev) => {
             const updatedPhaseMembers = [...(prev[phaseId] || [])];
-
+    
             if (updatedPhaseMembers.includes(memberId)) {
                 const index = updatedPhaseMembers.indexOf(memberId);
-                updatedPhaseMembers.splice(index, 1);
+                updatedPhaseMembers.splice(index, 1); // Remove if already assigned
             } else {
-                updatedPhaseMembers.push(memberId);
+                updatedPhaseMembers.push(memberId); // Add if not assigned
             }
-
+    
             return {
                 ...prev,
                 [phaseId]: updatedPhaseMembers,
             };
         });
     };
+    
 
 
     const handleSave = async () => {
         setSaving(true);
         try {
-            const savePromises = Object.entries(phaseAssignments).map(([phaseId, members]) =>
-                saveAssignedMembers(phaseId, members)
-            );
-
-            await Promise.all(savePromises);
-            alert('Assignments saved successfully!');
-            onClose();
+          const savePromises = Object.entries(phaseAssignments).map(([phaseId, members]) =>
+            saveAssignedMembers(phaseId, members)
+          );
+      
+          const results = await Promise.all(savePromises);
+      
+          // Hiển thị thông báo cho từng phase
+          results.forEach(result => {
+            if (result.success) {
+              toast.success(result.message);
+            } else {
+              toast.error(result.message);
+            }
+          });
+      
+          onClose();
         } catch (error) {
-            console.error('Error saving assignments:', error);
-            alert('Failed to save assignments.');
+          toast.error('Failed to save assignments.');
         } finally {
-            setSaving(false);
+          setSaving(false);
         }
-    };
+      };
+      
 
     if (!project) return null;
 
@@ -129,7 +143,7 @@ const AssignMemberProjectModal: React.FC<ProjectDetailProps> = ({
                                 {phases.map((phase) => (
                                     <tr key={phase.id} className="hover:bg-gray-50 transition duration-150">
                                         {/* Phase Name */}
-                                        <td className="p-3 border-b border-gray-300 text-gray-700 font-medium">{phase.phaseName}</td>
+                                        <td className="p-3 border-b border-gray-300 text-gray-700 font-medium">{phase.name}</td>
 
                                         {/* Duration */}
                                         <td className="p-3 border-b border-gray-300 text-gray-600">
@@ -139,14 +153,10 @@ const AssignMemberProjectModal: React.FC<ProjectDetailProps> = ({
                                         {/* Status */}
                                         <td className="p-3 border-b border-gray-300">
                                             <span
-                                                className={`inline-block px-3 py-1 text-xs font-bold text-white rounded ${phase.status === "Done"
-                                                        ? "bg-green-500"
-                                                        : phase.status === "In Progress"
-                                                            ? "bg-blue-500"
-                                                            : "bg-yellow-500"
+                                                className={`rounded-full px-3 py-1 text-sm ${phase.status ? 'bg-yellow-200 text-green-500' : 'bg-yellow-200 text-blue-500'
                                                     }`}
                                             >
-                                                {phase.status}
+                                                {phase.status ? 'Completed' : 'In progress'}
                                             </span>
                                         </td>
 
@@ -160,17 +170,18 @@ const AssignMemberProjectModal: React.FC<ProjectDetailProps> = ({
                                                 <div className="absolute z-10 hidden group-hover:block bg-white border border-gray-300 rounded shadow-md w-48">
                                                     {members.map((member) => (
                                                         <div
-                                                            key={member.id}
-                                                            className="flex items-center space-x-2 px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                                                            onClick={() => handleAssignChange(phase.id, member.id)}
-                                                        >
-                                                            <img
-                                                                src={member.avatar}
-                                                                alt={member.name}
-                                                                className="w-6 h-6 rounded-full object-cover"
-                                                            />
-                                                            <span className="text-sm text-gray-700">{member.name}</span>
-                                                        </div>
+                                                        key={member.id}
+                                                        className="flex items-center space-x-2 px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                                                        onClick={() => handleAssignChange(phase.id, member.id)}
+                                                    >
+                                                        <img
+                                                            src={member.avatar}
+                                                            alt={member.name}
+                                                            className="w-6 h-6 rounded-full object-cover"
+                                                        />
+                                                        <span className="text-sm text-gray-700">{member.name}</span>
+                                                    </div>
+                                                    
                                                     ))}
                                                 </div>
                                             </div>

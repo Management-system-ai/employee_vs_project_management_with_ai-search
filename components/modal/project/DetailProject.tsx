@@ -2,8 +2,20 @@ import {
   fetchProjectActivities,
   fetchProjectPhases
 } from '@/app/api/project/projects';
-import { ProjectDetailProps } from '@/types/types';
+import getImageSrc from '@/app/api/supabase/handleRetrive';
+import {
+  deletePhase,
+  deleteEmployeeProject
+} from '@/app/server-actions/supabase/client';
+import { UpdatePhaseModal } from '@/components/modal/phase/UpdatePhase';
+import { ProjectDetailProps, UpdatePhase } from '@/types/types';
+import { Phase } from '@prisma/client';
+import Image, { StaticImageData } from 'next/image';
 import React, { useEffect, useState } from 'react';
+import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
+import { toast } from 'react-toastify';
+import ProfileIcon from '@/resources/images/icons/icon profile.png';
+
 
 const DetailProjectModal: React.FC<ProjectDetailProps> = ({
   project,
@@ -12,6 +24,43 @@ const DetailProjectModal: React.FC<ProjectDetailProps> = ({
   const [activeTab, setActiveTab] = useState('information');
   const [tabData, setTabData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [showModalUpdate, setShowModalUpdate] = useState<boolean>(false);
+  const [phase, setPhase] = useState<UpdatePhase>({
+    id: '',
+    name: '',
+    description: '',
+    startDate: new Date(),
+    endDate: new Date()
+  });
+  const handleModalUpdate = async (phase: Phase) => {
+    setShowModalUpdate(true);
+    setPhase(phase);
+  };
+  const handleDeletePhase = async (phaseId: string, phaseName: string) => {
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete phase ${phaseName} ?`
+    );
+    if (!confirmDelete) return;
+    try {
+      const response = await deleteEmployeeProject(phaseId);
+      const result = await deletePhase(phaseId);
+      if (result) {
+        toast.success('Delete phase successful');
+      } else {
+        toast.error('Failed to delete phase');
+      }
+    } catch (error) {
+      toast.error('Error deleting phase');
+      console.error(error);
+    }
+  };
+  function getAvatar(avatar: string): string | StaticImageData {
+    if (avatar) {
+      const publicUrl = getImageSrc(avatar)?.publicUrl;
+      return publicUrl || ProfileIcon;
+    }
+    return ProfileIcon;
+  }
 
   useEffect(() => {
     if (project == undefined) return;
@@ -66,7 +115,7 @@ const DetailProjectModal: React.FC<ProjectDetailProps> = ({
                 <span className="font-lg w-1/6 font-bold">Type:</span>
                 <span>{project.type}</span>
               </div>
-              
+
               <div className="flex">
                 <span className="font-lg w-1/6 font-bold">Status:</span>
                 <span
@@ -84,67 +133,97 @@ const DetailProjectModal: React.FC<ProjectDetailProps> = ({
         );
       case 'phase':
         return (
-          <div>
+          <div >
             {!tabData || tabData.length === 0 ? (
               <p>No phases found.</p>
             ) : (
-              <table className="w-full">
-                <thead>
-                  <tr>
-                    <th className="p-2 text-left">Phase Name</th>
-                    <th className="p-2 text-left">Duration</th>
-                    <th className="p-2 text-left">Status</th>
-                    <th className="p-2 text-left">Members</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {tabData.map((phase, index) => (
-                    <tr key={index} className="space-y-2">
-                      <td className="p-2 text-left">{phase.phaseName}</td>
-                      <td className="p-2 text-left">
-                        {new Date(phase.startDate).toLocaleString('en-GB', {
-                          day: '2-digit',
-                          month: '2-digit'
-                        })}
-                        -{' '}
-                        {new Date(phase.endDate).toLocaleString('en-GB', {
-                          day: '2-digit',
-                          month: '2-digit',
-                          year: 'numeric'
-                        })}
-                      </td>
-                      <td>
-                        <span
-                          className={`rounded-full px-3 py-1 text-sm ${phase.status ? 'bg-yellow-200 text-green-500' : 'bg-yellow-200 text-blue-500'
-                            }`}
-                        >
-                          {phase.status ? 'Completed' : 'In progress'}
-                        </span>
-                      </td>
-                      <td className="p-2 text-left">
-                        {!phase.employees || phase.employees.length === 0 ? (
-                          'No employees assigned'
-                        ) : (
-                          <ul className="flex space-x-1">
-                            {phase.employees.map((employee: any, i: number) => (
-                              <li key={i} className="flex space-x-1">
-                                <img
-                                  src={employee.avatar}
-                                  alt="profile"
-                                  width={30}
-                                  height={30}
-                                />
-                                <span>{employee.name}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </td>
+
+              <div className='overflow-x-auto max-h-80 overflow-y-auto'>
+                <table className="min-w-full border-collapse">
+                  <thead className='sticky top-0 bg-white'>
+                    <tr>
+                      <th className="p-2 text-left">Phase Name</th>
+                      <th className="p-2 text-left">Duration</th>
+                      <th className="p-2 text-left">Status</th>
+                      <th className="p-2 text-left">Members</th>
+                      <th className="p-2 text-left">Action</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {tabData.map((phase, index) => (
+                      <tr key={index} className="space-y-2">
+                        <td className="p-2 text-left">{phase.name}</td>
+                        <td className="p-2 text-left">
+                          {new Date(phase.startDate).toLocaleString('en-GB', {
+                            day: '2-digit',
+                            month: '2-digit'
+                          })}
+                          -{' '}
+                          {new Date(phase.endDate).toLocaleString('en-GB', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                          })}
+                        </td>
+                        <td>
+                          <span
+                            className={`rounded-full px-3 py-1 text-sm ${phase.status ? 'bg-yellow-200 text-green-500' : 'bg-yellow-200 text-blue-500'
+                              }`}
+                          >
+                            {phase.status ? 'Completed' : 'In progress'}
+                          </span>
+                        </td>
+                        <td className="p-2 text-left">
+                          {!phase.employees || phase.employees.length === 0 ? (
+                            'No employees assigned'
+                          ) : (
+                            <ul className=" space-x-1 space-y-1">
+                              {phase.employees.map((employee: any, i: number) => (
+                                <li key={i} className="flex space-x-1">
+                                  <Image
+                                    src={getAvatar(employee.avatar)}
+                                    alt={employee.name}
+                                    width={20}
+                                    height={20}
+                                    className="rounded-full max-h-10 min-h-10 max-w-10 min-w-10 object-cover"
+                                  />
+                                  <span>{employee.name}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </td>
+                        <td>
+                          <div className="flex space-x-3">
+                            <button
+                              className="text-blue-500 hover:text-blue-700"
+                              onClick={() => {
+                                handleModalUpdate(phase);
+                              }}
+                            >
+                              <AiOutlineEdit />
+                            </button>
+                            <button
+                              className="text-red-500 hover:text-red-700"
+                              onClick={() => {
+                                handleDeletePhase(phase.id, phase.name);
+                              }}
+                            >
+                              <AiOutlineDelete />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
+            <UpdatePhaseModal
+              showModalUpdate={showModalUpdate}
+              setShowModalUpdate={setShowModalUpdate}
+              phase={phase}
+            />
           </div>
         );
       case 'activity':
@@ -156,7 +235,7 @@ const DetailProjectModal: React.FC<ProjectDetailProps> = ({
               <div>
                 {tabData.map((activity, index) => (
                   <p className="p-2 text-sm border-b border-gray-200" key={index}>
-                    <span className="font-semibold text-blue-600">{activity.employee+" "}</span>
+                    <span className="font-semibold text-blue-600">{activity.employee + " "}</span>
                     <span className={`p-1/2 px-2 text-xs font-medium badge ${activity.action ? "join" : "leave"}`}>
                       {activity.action ? "Join" : "Leave"}
                     </span>
@@ -187,7 +266,7 @@ const DetailProjectModal: React.FC<ProjectDetailProps> = ({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="h-1/2 w-1/2 rounded-lg bg-white p-6">
+      <div className="h-3/4 w-1/2 rounded-lg bg-white p-6">
         <div className="flex justify-between">
           <h2 className="mb-4 text-xl font-bold">Project Details</h2>
           <button
