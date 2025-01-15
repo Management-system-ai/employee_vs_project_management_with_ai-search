@@ -10,6 +10,38 @@ import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import 'highlight.js/styles/atom-one-dark.css';
 
+const suggestedQuestions = [
+  "Tìm tất cả các dự án thuộc domain 'X'",
+  "Tìm các dự án mà nhân viên 'Nguyễn Đức Quyền' đang tham gia",
+  "Đưa ra các kỹ năng mà dự án 'X' đang yêu cầu",
+  'Lấy các dự án còn hoạt động, bao gồm thông tin phase và nhân viên tham gia',
+  "Tìm nhân viên có vai trò 'DEVELOPER' và đang làm việc",
+  "Tìm nhân viên có kỹ năng 'PHP'",
+  "Tìm nhân viên đang làm trong dự án 'Project A'"
+];
+
+const SuggestedQuestions = ({
+  onSelectQuestion
+}: {
+  onSelectQuestion: (question: string) => void;
+}) => (
+  <div className="flex flex-col space-y-2 rounded-lg bg-gray-50 p-4 shadow-sm">
+    <p className="mb-2 text-sm font-semibold text-gray-700">
+      Suggested Questions:
+    </p>
+    <div className="grid gap-2">
+      {suggestedQuestions.map((question, index) => (
+        <button
+          key={index}
+          onClick={() => onSelectQuestion(question)}
+          className="rounded-md border border-gray-200 bg-white px-4 py-2 text-left text-sm text-purple-600 shadow-sm transition-all duration-200 ease-in-out hover:scale-[1.02] hover:border-purple-300 hover:bg-purple-50 hover:shadow-md"
+        >
+          {question}
+        </button>
+      ))}
+    </div>
+  </div>
+);
 export default function ChatBot({ hidden }: { hidden: boolean }) {
   const [isChatboxOpen, setIsChatboxOpen] = useState(false);
   const [messages, setMessages] = useState<ChatHistory[]>([]);
@@ -42,6 +74,10 @@ export default function ChatBot({ hidden }: { hidden: boolean }) {
     } catch (error) {
       console.error('Error generating response:', error);
     }
+  };
+
+  const handleSelectQuestion = (question: string) => {
+    setInputMessage(question);
   };
 
   useEffect(() => {
@@ -79,32 +115,36 @@ export default function ChatBot({ hidden }: { hidden: boolean }) {
               ref={chatboxRef}
               className="h-80 overflow-y-auto bg-gray-50 p-4"
             >
-              {messages.map((message, index) => (
-                <div
-                  key={index}
-                  className={`animate-fadeIn mb-2 ${message.role === USER_ROLE ? 'text-right' : ''}`}
-                >
+              {messages.length === 0 ? (
+                <SuggestedQuestions onSelectQuestion={handleSelectQuestion} />
+              ) : (
+                messages.map((message, index) => (
                   <div
-                    className={`${
-                      message.role === USER_ROLE
-                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
-                        : 'bg-white text-gray-700 shadow-md'
-                    } inline-block rounded-2xl px-4 py-2 transition-all duration-300 hover:shadow-lg`}
+                    key={index}
+                    className={`animate-fadeIn mb-2 ${message.role === USER_ROLE ? 'text-right' : ''}`}
                   >
-                    {message.role === USER_ROLE ? (
-                      message.content
-                    ) : (
-                      <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
-                        rehypePlugins={[rehypeHighlight]}
-                        className="prose prose-sm max-w-none"
-                      >
-                        {message.content}
-                      </ReactMarkdown>
-                    )}
+                    <div
+                      className={`${
+                        message.role === USER_ROLE
+                          ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
+                          : 'bg-white text-gray-700 shadow-md'
+                      } inline-block rounded-2xl px-4 py-2 transition-all duration-300 hover:shadow-lg`}
+                    >
+                      {message.role === USER_ROLE ? (
+                        message.content
+                      ) : (
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          rehypePlugins={[rehypeHighlight]}
+                          className="prose prose-sm max-w-none"
+                        >
+                          {message.content}
+                        </ReactMarkdown>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
             <div className="flex border-t bg-gray-50 p-4">
               <input
