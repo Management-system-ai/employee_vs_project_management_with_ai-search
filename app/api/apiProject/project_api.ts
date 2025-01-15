@@ -33,7 +33,6 @@ export const addProject = async (newProject: Project) => {
 export const updateProject = async (id: string, project: Project) => {
   try {
     const supabase = supabaseBrowserClient();
-    console.log('Update data before updateupdate:', project);
     const { data, error } = await supabase
       .from('Projects')
       .update({
@@ -52,7 +51,6 @@ export const updateProject = async (id: string, project: Project) => {
       console.error('Supabase error:', error.message);
       throw error;
     }
-    console.log('Update successful. Updated data:', data);
     return data[0];
   } catch (error) {
     console.error('Error updating project:', error);

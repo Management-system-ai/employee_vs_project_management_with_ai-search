@@ -61,7 +61,6 @@ const UpdateEmployeeModal: React.FC<UpdateEmployeeProps> = ({
         ? [...prevSkills, value]
         : prevSkills.filter(skill => skill !== value)
     );
-    console.log(employeeSkills);
   };
 
   function getAvatar(avatar: string | undefined): string | StaticImageData {

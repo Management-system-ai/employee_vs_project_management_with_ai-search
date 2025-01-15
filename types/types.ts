@@ -1,5 +1,6 @@
 import { Phase } from '@prisma/client';
 import { EmployeeRole } from '@prisma/client';
+import { USER_ROLE, BOT_ROLE } from '@/constants';
 interface Project {
   id: string;
   name: string;
@@ -107,7 +108,16 @@ export const Role = {
   projectManager: { name: 'Manager', value: EmployeeRole.PROJECT_MANAGER }
 };
 
+interface ChatHistory {
+  role: typeof USER_ROLE | typeof BOT_ROLE;
+  content: string;
+}
 
+interface QueryIntent {
+  type: 'FIND_EMPLOYEES' | 'PROJECT_ANALYSIS' | 'SKILL_ANALYSIS';
+  filters?: Record<string, any>;
+  relations?: string[];
+}
 
 export type {
   Project,
@@ -119,6 +129,8 @@ export type {
   SearchBarProps,
   ProjectDetailProps,
   Skill,
+  ChatHistory,
+  QueryIntent,
   DeleteProjectModalProps,
   ModalCreatePhase,
   UpdatedPhase,

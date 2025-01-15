@@ -42,7 +42,6 @@ const DetailEmployeeModal: React.FC<EmployeeDetailProps> = ({
           break;
         case 'activity':
           data = await fetchEmployeeActivity(employee.id);
-          console.log(data);
           break;
         default:
           break;

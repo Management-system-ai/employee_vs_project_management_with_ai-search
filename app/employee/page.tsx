@@ -5,6 +5,7 @@ import Pagination from '@/components/table/Pagination';
 import DataTableEmployee from '@/components/table/DataTableEmployee';
 import { getEmployees } from '../server-actions/supabase/server';
 import CreateEmployee from '@/components/modal/employee/CreateEmployee';
+import { Employee } from '@/types/types';
 
 const EmployeePage: React.FC = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
