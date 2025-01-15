@@ -3,16 +3,24 @@ import { fetchEmPloyee } from '@/app/api/employees/employee_api';
 import React, { useEffect, useState } from 'react';
 import { ProjectDetailProps } from '@/types/types';
 import { toast } from 'react-toastify';
+import Image, { StaticImageData } from 'next/image';
+import ProfileIcon from '@/resources/images/icons/icon profile.png';
+import getImageSrc from '@/app/api/supabase/handleRetrive';
+import { AiOutlineUserAdd } from 'react-icons/ai';
+import { FaPlus } from "react-icons/fa";
 
-const AssignMemberProjectModal: React.FC<ProjectDetailProps> = ({
-    project,
-    onClose,
-}) => {
-    const [phases, setPhases] = useState<any[]>([]);
-    const [members, setMembers] = useState<any[]>([]);
-    const [phaseAssignments, setPhaseAssignments] = useState<Record<string, string[]>>({});
+const AssignMemberProjectModal = ({ project, onClose }: { project: ProjectDetailProps; onClose: () => void }) => {
+    const [phases, setPhases] = useState([]);
+    const [members, setMembers] = useState([]);
+    const [phaseAssignments, setPhaseAssignments] = useState({});
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [currentIndex, setIndex] = useState(0);
+    const [dropdownOpen, setDropdownOpen] = useState({});
+    const [selectedMembers, setSelectedMembers] = useState({});
+    const [showMoreMembers, setShowMoreMembers] = useState<Record<string, boolean>>({});
+
+
 
     useEffect(() => {
         if (!project) return;
@@ -24,77 +32,100 @@ const AssignMemberProjectModal: React.FC<ProjectDetailProps> = ({
                     fetchProjectPhases(project.id),
                     fetchEmPloyee(project.id),
                 ]);
+
                 setPhases(phaseData || []);
                 setMembers(memberData || []);
 
-                const initialAssignments: Record<string, string[]> = {};
-                phaseData?.forEach((phase: any) => {
-                    initialAssignments[phase.id] = phase.employees.map((e: any) => e.id) || [];
+                const initialAssignments: { [key: string]: string[] } = {};
+                phaseData?.forEach((phase) => {
+                    initialAssignments[phase.id] = phase.employees.map((e) => e.id) || [];
                 });
                 setPhaseAssignments(initialAssignments);
+                const initialSelectedMembers: { [key: string]: any[] } = {};
+                phaseData?.forEach((phase) => {
+                    const savedMembers = localStorage.getItem(`selectedMembers-${phase.id}`);
+                    initialSelectedMembers[phase.id] = savedMembers ? JSON.parse(savedMembers) : [];
+                });
+                setSelectedMembers(initialSelectedMembers);
             } catch (error) {
                 console.error('Failed to fetch data:', error);
             } finally {
                 setLoading(false);
             }
-        };
-        loadData();
+        }; loadData();
     }, [project]);
 
-    const handleAssignChange = (phaseId: string, memberId: string) => {
-        console.log('Selected Phase:', phaseId);
-        console.log('Selected Member:', memberId);
-    
-        if (!phaseId) {
-            console.error('Invalid phaseId:', phaseId);
-            return;
+    const getAvatar = (avatar: string) => {
+        return avatar ? getImageSrc(avatar)?.publicUrl || ProfileIcon : ProfileIcon;
+    };
+
+    const toggleDropdown = (phaseId: string) => {
+        setDropdownOpen((prev: Record<string, boolean>) => ({
+            ...prev,
+            [phaseId]: !prev[phaseId],
+        }));
+    };
+
+    const handleSelectMember = (phaseId: string, memberId: string) => {
+        const member = members.find((m) => m.id === memberId);
+        if (member) {
+            setSelectedMembers((prev: Record<string, any[]>) => {
+                const updatedMembers = [...(prev[phaseId] || [])];
+                if (!updatedMembers.some((m) => m.id === memberId)) {
+                    updatedMembers.push(member);
+                }
+                localStorage.setItem(`selectedMembers-${phaseId}`, JSON.stringify(updatedMembers));
+                return {
+                    ...prev,
+                    [phaseId]: updatedMembers,
+                };
+            });
+            handleAssignChange(phaseId, memberId);
+            toggleDropdown(phaseId);
         }
-    
+    };
+
+    const handleAssignChange = (phaseId, memberId) => {
         setPhaseAssignments((prev) => {
             const updatedPhaseMembers = [...(prev[phaseId] || [])];
-    
+
             if (updatedPhaseMembers.includes(memberId)) {
-                const index = updatedPhaseMembers.indexOf(memberId);
-                updatedPhaseMembers.splice(index, 1); // Remove if already assigned
+                updatedPhaseMembers.splice(updatedPhaseMembers.indexOf(memberId), 1);
             } else {
-                updatedPhaseMembers.push(memberId); // Add if not assigned
+                updatedPhaseMembers.push(memberId);
             }
-    
+
             return {
                 ...prev,
                 [phaseId]: updatedPhaseMembers,
             };
         });
     };
-    
 
-
-    const handleSave = async () => {
+    const handleSave = async (index: number) => {
+        setIndex(index);
         setSaving(true);
         try {
-          const savePromises = Object.entries(phaseAssignments).map(([phaseId, members]) =>
-            saveAssignedMembers(phaseId, members)
-          );
-      
-          const results = await Promise.all(savePromises);
-      
-          // Hiển thị thông báo cho từng phase
-          results.forEach(result => {
-            if (result.success) {
-              toast.success(result.message);
-            } else {
-              toast.error(result.message);
-            }
-          });
-      
-          onClose();
+            const savePromises = Object.entries(phaseAssignments).map(([phaseId, members]) => {
+                return saveAssignedMembers(phaseId, members);
+            });
+
+            const results = await Promise.all(savePromises);
+            results.forEach((result) => {
+                if (!result.success) {
+                    toast.error(result.message);
+                }
+            });
+            toast.success('Assignments saved successfully!');
+
+            onClose();
         } catch (error) {
-          toast.error('Failed to save assignments.');
+            toast.error('Failed to save assignments.');
         } finally {
-          setSaving(false);
+            setSaving(false);
         }
-      };
-      
+    };
+
 
     if (!project) return null;
 
@@ -114,12 +145,7 @@ const AssignMemberProjectModal: React.FC<ProjectDetailProps> = ({
                             viewBox="0 0 24 24"
                             stroke="currentColor"
                         >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M6 18L18 6M6 6l12 12"
-                            />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                 </div>
@@ -136,65 +162,103 @@ const AssignMemberProjectModal: React.FC<ProjectDetailProps> = ({
                                     <th className="p-3 text-left text-sm font-semibold border-b border-gray-300">Phase Name</th>
                                     <th className="p-3 text-left text-sm font-semibold border-b border-gray-300">Duration</th>
                                     <th className="p-3 text-left text-sm font-semibold border-b border-gray-300">Status</th>
-                                    <th className="p-3 text-center text-sm font-semibold border-b border-gray-300">Assigned To</th>
+                                    <th className="p-3 text-center text-sm font-semibold border-b border-gray-300">Members</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {phases.map((phase) => (
+                                {phases.map((phase: { id: string; name: string; startDate: string; endDate: string; status: boolean }, index: number) => (
                                     <tr key={phase.id} className="hover:bg-gray-50 transition duration-150">
-                                        {/* Phase Name */}
                                         <td className="p-3 border-b border-gray-300 text-gray-700 font-medium">{phase.name}</td>
-
-                                        {/* Duration */}
                                         <td className="p-3 border-b border-gray-300 text-gray-600">
                                             {new Date(phase.startDate).toLocaleDateString()} - {new Date(phase.endDate).toLocaleDateString()}
                                         </td>
-
-                                        {/* Status */}
                                         <td className="p-3 border-b border-gray-300">
                                             <span
-                                                className={`rounded-full px-3 py-1 text-sm ${phase.status ? 'bg-yellow-200 text-green-500' : 'bg-yellow-200 text-blue-500'
+                                                className={`rounded-full px-3 py-1 text-sm ${phase.status ? 'bg-green-200 text-green-500' : 'bg-yellow-200 text-blue-500'
                                                     }`}
                                             >
-                                                {phase.status ? 'Completed' : 'In progress'}
+                                                {phase.status ? 'Completed' : 'In Progress'}
                                             </span>
                                         </td>
-
-                                        {/* Assigned To */}
                                         <td className="p-3 border-b border-gray-300 text-center">
-                                            {/* Dropdown */}
-                                            <div className="relative group">
-                                                <button className="px-3 py-1 bg-gray-200 rounded text-sm text-gray-600 hover:bg-gray-300">
-                                                    Select Assignee
-                                                </button>
-                                                <div className="absolute z-10 hidden group-hover:block bg-white border border-gray-300 rounded shadow-md w-48">
-                                                    {members.map((member) => (
-                                                        <div
-                                                        key={member.id}
-                                                        className="flex items-center space-x-2 px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                                                        onClick={() => handleAssignChange(phase.id, member.id)}
-                                                    >
-                                                        <img
-                                                            src={member.avatar}
+                                            <div className="flex items-center">
+                                                {(selectedMembers[phase.id as keyof typeof selectedMembers] || []).slice(0, 4).map((member: { id: string; name: string; avatar: string }) => (
+                                                    <div key={member.id} className="flex items-center">
+                                                        <Image
+                                                            src={getAvatar(member.avatar)}
                                                             alt={member.name}
-                                                            className="w-6 h-6 rounded-full object-cover"
+                                                            width={20}
+                                                            height={20}
+                                                            className="rounded-full max-h-10 min-h-10 max-w-10 min-w-10 object-cover"
+                                                            title={member.name}
                                                         />
-                                                        <span className="text-sm text-gray-700">{member.name}</span>
                                                     </div>
-                                                    
+                                                ))}
+
+                                                {showMoreMembers[phase.id as keyof typeof showMoreMembers] && (
+                                                    <div className="flex flex-wrap">
+                                                        {(selectedMembers[phase.id as keyof typeof selectedMembers] || []).slice(4).map((member: { id: string; name: string; avatar: string }) => (
+                                                            <div key={member.id} className="flex items-center">
+                                                                <Image
+                                                                    src={getAvatar(member.avatar)}
+                                                                    alt={member.name}
+                                                                    width={20}
+                                                                    height={20}
+                                                                    className="rounded-full max-h-10 min-h-10 max-w-10 min-w-10 object-cover"
+                                                                    title={member.name}
+                                                                />
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+
+                                                {(selectedMembers[phase.id as keyof typeof selectedMembers] || []).length > 4 && (
+                                                    <button
+                                                        onClick={() => setShowMoreMembers((prev) => ({ ...prev, [phase.id]: !prev[phase.id] }))}
+                                                        className="w-8 h-8 flex items-center justify-center"
+                                                    >
+                                                        <FaPlus className="text-gray-600" />
+                                                    </button>
+                                                )}
+
+                                                <button
+                                                    onClick={() => toggleDropdown(phase.id)}
+                                                    className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 hover:bg-gray-100"
+                                                >
+                                                    <AiOutlineUserAdd className="text-gray-600" />
+                                                </button>
+                                            </div>
+
+
+                                            {dropdownOpen[phase.id as keyof typeof dropdownOpen] && (
+                                                <div className="absolute z-10 bg-white border border-gray-300 rounded shadow-md w-48 mt-2 max-h-48 overflow-y-auto">
+                                                    {members.map((member: { id: string; name: string; avatar: string }) => (
+                                                        <div
+                                                            key={member.id}
+                                                            className="flex items-center space-x-2 px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                                                            onClick={() => handleSelectMember(phase.id, member.id)}
+                                                        >
+                                                            <Image
+                                                                src={getAvatar(member.avatar)}
+                                                                alt={member.name}
+                                                                width={20}
+                                                                height={20}
+                                                                className="rounded-full max-h-10 min-h-10 max-w-10 min-w-10 object-cover"
+                                                            />
+                                                            <span className="text-sm text-gray-700">{member.name}</span>
+                                                        </div>
                                                     ))}
                                                 </div>
-                                            </div>
+                                            )}
+
                                         </td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
-
-
                         <div className="mt-4 flex justify-end">
                             <button
-                                className={`px-4 py-2 rounded bg-blue-600 text-white ${saving && 'opacity-50'}`}
+                                className={`px-4 py-2 rounded bg-blue-600 text-white ${saving}`}
                                 onClick={handleSave}
                                 disabled={saving}
                             >
@@ -204,8 +268,7 @@ const AssignMemberProjectModal: React.FC<ProjectDetailProps> = ({
                     </>
                 )}
             </div>
-        </div>
+        </div >
     );
 };
-
 export default AssignMemberProjectModal;

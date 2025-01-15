@@ -110,7 +110,7 @@ export const saveAssignedMembers = async (phaseId: string, assignedMembers: stri
   const supabase = supabaseBrowserClient();
 
   try {
-    // Kiểm tra phaseId hợp lệ và lấy projectId
+    // Validate phaseId and get projectId
     const { data: phaseData, error: phaseError } = await supabase
       .from('Phase')
       .select('id, projectId')
@@ -126,31 +126,30 @@ export const saveAssignedMembers = async (phaseId: string, assignedMembers: stri
 
     const validProjectId = phaseData[0].projectId;
 
-    // Lọc các employeeId hợp lệ
     const validEmployeeIds = assignedMembers.filter(employeeId => employeeId !== null && employeeId !== undefined);
 
-    // Lấy danh sách các employeeId đã tồn tại với phaseId
     const { data: existingAssignments, error: fetchError } = await supabase
       .from('EmployeeProjects')
       .select('employeeId')
       .eq('phaseId', phaseId);
 
-    if (fetchError) {
-      throw new Error(`Failed to fetch existing assignments: ${fetchError.message}`);
-    }
+    // if (fetchError) {
+    //   throw new Error(`Failed to fetch existing assignments: ${fetchError.message}`);
+    // }
 
-    // Phân loại employeeId: đã tồn tại và chưa tồn tại
     const existingEmployeeIds = existingAssignments.map(e => e.employeeId);
     const newEmployeeIds = validEmployeeIds.filter(employeeId => !existingEmployeeIds.includes(employeeId));
 
-    if (newEmployeeIds.length === 1) {
-      return {
-        success: true,
-        message: 'No new employees were assigned because all employees already exist.',
-      };
-    }
+    // If there are no new assignments, return success early
+    // if (newEmployeeIds.length === 0) {
+    //   console.log(`No new employees to assign for phaseId: ${phaseId}`);
+    //   return {
+    //     success: true,
+    //     message: 'No new employees to assign.',
+    //   };
+    // }
 
-    // Chuẩn bị dữ liệu cần thêm mới
+    // Perform the upsert if there are new employee assignments
     const upsertData = newEmployeeIds.map(employeeId => ({
       phaseId,
       employeeId,
@@ -159,18 +158,13 @@ export const saveAssignedMembers = async (phaseId: string, assignedMembers: stri
       timestamp: new Date().toISOString(),
     }));
 
-    // Thực hiện upsert dữ liệu
     const { data: upsertedData, error: upsertError } = await supabase
       .from('EmployeeProjects')
       .upsert(upsertData);
 
-    if (upsertError) {
-      throw new Error(`Failed to upsert employee data: ${upsertError.message}`);
-    }
-
     return {
       success: true,
-      message: `Successfully added new employees`,
+      message: 'Successfully added new employees.',
     };
   } catch (error) {
     console.error('Error saving assigned members:', error);
