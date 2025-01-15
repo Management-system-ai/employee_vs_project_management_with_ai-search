@@ -10,7 +10,7 @@ import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import 'highlight.js/styles/atom-one-dark.css';
 
-export default function ChatBot() {
+export default function ChatBot({ hidden }: { hidden: boolean }) {
   const [isChatboxOpen, setIsChatboxOpen] = useState(false);
   const [messages, setMessages] = useState<ChatHistory[]>([]);
   const [inputMessage, setInputMessage] = useState('');
@@ -52,7 +52,9 @@ export default function ChatBot() {
 
   return (
     <>
-      <div className="fixed bottom-0 right-0 mb-4 mr-6">
+      <div
+        className={`fixed bottom-0 right-0 mb-4 mr-6 ${hidden === true ? 'hidden' : ''}`}
+      >
         <button
           onClick={toggleChatbox}
           className="flex items-center rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 px-2 py-2 text-white transition-all duration-300 hover:scale-105 hover:shadow-lg"

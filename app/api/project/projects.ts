@@ -187,8 +187,6 @@ export const addProject = async (newProject: Project) => {
   try {
     const supabase = supabaseBrowserClient();
 
-    console.log('Adding project:', newProject);
-
     const { data: projectData, error: projectError } = await supabase
       .from('Projects')
       .insert([newProject])
@@ -208,8 +206,6 @@ export const addProject = async (newProject: Project) => {
         endDate: newProject.endDate || null,
       };
 
-      console.log('Adding phase:', phase);
-
       const { error: phaseError } = await supabase
         .from('Phase')
         .insert([phase]);
@@ -218,8 +214,6 @@ export const addProject = async (newProject: Project) => {
         console.error('Phase insertion error:', phaseError);
         throw phaseError;
       }
-
-      console.log('Phase added successfully!');
     }
 
     return projectData;
@@ -240,7 +234,6 @@ export const deleteProject = async (projectId: string) => {
       .eq('id', projectId);
 
     if (projectError) {
-      console.log('Fail to delete project', projectError);
       throw new Error('Failed to delete project');
     }
   } catch (error) {

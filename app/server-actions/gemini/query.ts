@@ -9,11 +9,8 @@ export async function processUserQuery(
   chatHistory: ChatHistory[]
 ) {
   try {
-    console.log('Chat history: ', chatHistory);
-
     // 1. Analyze question using AI
     const analysis = await analyzeUserQuestion(userMessage, chatHistory);
-    console.log('AI Analysis:', analysis);
 
     // 2. Validate analysis results
     if (!analysis.intent || !analysis.intent.type) {
@@ -35,8 +32,6 @@ export async function processUserQuery(
         timestamp: new Date().toISOString()
       }
     };
-
-    console.log('Formatted Results:', formattedResults);
 
     return {
       success: true,

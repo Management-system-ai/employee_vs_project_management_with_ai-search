@@ -19,22 +19,20 @@ const AddProjectModal = ({
 
   const handleTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setProjectType(event.target.value);
-    console.log('Selected project type:', event.target.value);
   };
 
   const handleFieldChange = (
-      index: number,
-      field: string,
-      value: string | number | Date
-    ) => {
-      const updatedForm = [...form];
-      updatedForm[index] = {
-        ...updatedForm[index],
-        [field]: value
-      };
-      setForm(updatedForm);
+    index: number,
+    field: string,
+    value: string | number | Date
+  ) => {
+    const updatedForm = [...form];
+    updatedForm[index] = {
+      ...updatedForm[index],
+      [field]: value
     };
-  
+    setForm(updatedForm);
+  };
 
   useEffect(() => {
     const loadDomains = async () => {
@@ -71,8 +69,7 @@ const AddProjectModal = ({
       startDate: formData.get('startDate') as string,
       endDate: formData.get('endDate') as string,
       updatedAt: new Date().toISOString(),
-      isActive: true,
-
+      isActive: true
     };
     try {
       await onAdd(newProject);
@@ -181,25 +178,25 @@ const AddProjectModal = ({
             </div>
           </div>
           <div className="Phase">
-            {projectType === "SHORT_TERM" && (
+            {projectType === 'SHORT_TERM' && (
               <div className="rounded border border-gray-300 bg-gray-100 p-4 text-left dark:border-gray-600 dark:bg-gray-700">
                 <form
-                  onSubmit={async (e) => {
+                  onSubmit={async e => {
                     e.preventDefault();
 
                     const newProject = {
-                      name: projectType.name || "Default Project Name", 
-                      description: projectType.description || "No description provided",
-                      type: "SHORT_TERM",
+                      name: projectType.name || 'Default Project Name',
+                      description:
+                        projectType.description || 'No description provided',
+                      type: 'SHORT_TERM',
                       startDate: projectType.startDate,
-                      endDate: projectType.endDate,
+                      endDate: projectType.endDate
                     };
 
                     try {
                       const addedProject = await addProject(newProject);
-                      console.log("Project and phase created successfully:", addedProject);
                     } catch (error) {
-                      console.error("Error creating project and phase:", error);
+                      console.error('Error creating project and phase:', error);
                     }
                   }}
                 >
@@ -217,8 +214,8 @@ const AddProjectModal = ({
                         className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                         placeholder="Enter name"
                         value={projectType.name}
-                        onChange={(e) =>
-                          handleFieldChange(projectType, "name", e.target.value)
+                        onChange={e =>
+                          handleFieldChange(projectType, 'name', e.target.value)
                         }
                         required
                       />
@@ -237,8 +234,12 @@ const AddProjectModal = ({
                         className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                         placeholder="Enter description"
                         value={projectType.description}
-                        onChange={(e) =>
-                          handleFieldChange(projectType, "description", e.target.value)
+                        onChange={e =>
+                          handleFieldChange(
+                            projectType,
+                            'description',
+                            e.target.value
+                          )
                         }
                         required
                       />
@@ -253,10 +254,10 @@ const AddProjectModal = ({
                         name="startDate"
                         className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                         value={projectType.startDate}
-                        onChange={(e) =>
+                        onChange={e =>
                           handleFieldChange(
                             projectType,
-                            "startDate",
+                            'startDate',
                             new Date(e.target.value)
                           )
                         }
@@ -273,10 +274,10 @@ const AddProjectModal = ({
                         name="endDate"
                         className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                         value={projectType.endDate}
-                        onChange={(e) =>
+                        onChange={e =>
                           handleFieldChange(
                             projectType,
-                            "endDate",
+                            'endDate',
                             new Date(e.target.value)
                           )
                         }
@@ -314,4 +315,3 @@ export default AddProjectModal;
 function setForm(updatedForm: any[]) {
   throw new Error('Function not implemented.');
 }
-

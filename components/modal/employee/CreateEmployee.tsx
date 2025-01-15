@@ -64,7 +64,6 @@ const CreateEmployeeModal: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form Data:', formData);
     createEmployee(formData);
     toggleModal();
   };
