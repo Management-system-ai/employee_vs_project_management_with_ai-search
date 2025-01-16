@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { FaUser, FaClipboardList, FaSignOutAlt } from 'react-icons/fa';
+import { FaUser, FaClipboardList, FaSignOutAlt, FaChartPie } from 'react-icons/fa';
 import { PanelLeft } from 'lucide-react';
 import { signOut } from '@/utils/actions';
 import logo from '@/resources/images/hr-logo.png';
@@ -24,7 +24,7 @@ const Sidebar = () => {
   };
 
   const menuItems = [
-    { label: 'Dashboard', icon: <FaUser size={23} />, path: '/' },
+    { label: 'Dashboard', icon: <FaChartPie  size={23} />, path: '/' },
     { label: 'Employee', icon: <FaUser size={23} />, path: '/employee' },
     { label: 'Project', icon: <FaClipboardList size={23} />, path: '/project' }
   ];

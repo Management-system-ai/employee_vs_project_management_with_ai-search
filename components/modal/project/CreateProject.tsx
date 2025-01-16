@@ -81,7 +81,7 @@ const AddProjectModal = ({
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
       <div className="w-1/2 rounded-lg bg-white p-6">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-bold">Add Project</h2>
@@ -106,7 +106,7 @@ const AddProjectModal = ({
           </button>
         </div>
         <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4 ">
             <div className="space-y-1">
               <label className="font-lg font-bold">Name</label>
               <input

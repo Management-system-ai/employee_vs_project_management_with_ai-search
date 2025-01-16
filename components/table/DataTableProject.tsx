@@ -68,7 +68,7 @@ const DataTableProject: React.FC<DataTableProps> = ({
   return (
     <div className="mt-6 max-h-96 overflow-y-auto rounded-md bg-white">
       <table className="min-w-full table-auto">
-        <thead>
+        <thead className='sticky top-0 z-0 bg-white'>
           <tr>
             {['Name', 'Type', 'Domain', 'Description', 'Status', 'Action'].map(
               col => (

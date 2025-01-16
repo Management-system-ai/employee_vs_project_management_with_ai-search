@@ -46,9 +46,9 @@ const DataTableEmployee: React.FC<DataEmployeeTableProps> = ({ employees }) => {
     }
   };
   return (
-    <>
-      <table className="mt-6 min-w-full table-auto rounded-md bg-white">
-        <thead>
+    <div className='mt-6 max-h-96 overflow-y-auto rounded-md bg-white'>
+      <table className="min-w-full table-auto">
+      <thead className='sticky top-0 bg-white'>
           <tr>
             {['name', 'email', 'dateOfBirth', 'role', 'status', 'action'].map(col => (
               <th key={col} className="border-b px-4 py-3 text-start">
@@ -111,10 +111,9 @@ const DataTableEmployee: React.FC<DataEmployeeTableProps> = ({ employees }) => {
         </tbody>
       </table>
       <DetailEmployeeModal employee={selectedEmployee} onCloseDetail={closeModal} />
-
       {selectedForUpdate ? <UpdateEmployeeModal employee={selectedForUpdate} onCloseUpdate={closeUpdate} /> : ''}
 
-    </>
+    </div>
   );
 };
 

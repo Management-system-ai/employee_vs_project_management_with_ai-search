@@ -101,7 +101,7 @@ const DetailProjectModal: React.FC<ProjectDetailProps> = ({
     switch (activeTab) {
       case 'information':
         return (
-          <div className="bg-white">
+          <div className="bg-white h-full">
             <div className="space-y-2">
               <div className="flex">
                 <span className="font-lg w-1/6 font-bold">Name:</span>
@@ -133,12 +133,12 @@ const DetailProjectModal: React.FC<ProjectDetailProps> = ({
         );
       case 'phase':
         return (
-          <div >
+          <div className='h-full' >
             {!tabData || tabData.length === 0 ? (
               <p>No phases found.</p>
             ) : (
 
-              <div className='overflow-x-auto max-h-80 overflow-y-auto'>
+              <div className='overflow-x-auto max-h-96 overflow-y-auto'>
                 <table className="min-w-full border-collapse">
                   <thead className='sticky top-0 bg-white'>
                     <tr>
@@ -151,7 +151,9 @@ const DetailProjectModal: React.FC<ProjectDetailProps> = ({
                   </thead>
                   <tbody>
                     {tabData.map((phase, index) => (
-                      <tr key={index} className="space-y-2">
+                    
+                      <tr key={index} className="space-y-2 border">
+
                         <td className="p-2 text-left">{phase.name}</td>
                         <td className="p-2 text-left">
                           {new Date(phase.startDate).toLocaleString('en-GB', {
@@ -266,7 +268,7 @@ const DetailProjectModal: React.FC<ProjectDetailProps> = ({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="h-3/4 w-2/3 rounded-lg bg-white p-6">
+      <div className="h-[384px ] w-2/3 rounded-lg bg-white p-6">
         <div className="flex justify-between">
           <h2 className="mb-4 text-xl font-bold">Project Details</h2>
           <button

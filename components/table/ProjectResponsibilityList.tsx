@@ -81,7 +81,7 @@ const ProjectResponsibilityList: React.FC<ProjectListProps> = ({
                             </span>
                           </div>
                           <div className="text-sm text-gray-600">
-                            {activity.action}
+                            {activity.action ? "Join" : "Left"}
                           </div>
                         </div>
 
