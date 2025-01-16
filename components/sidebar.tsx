@@ -6,7 +6,8 @@ import Link from 'next/link';
 import { FaUser, FaClipboardList, FaSignOutAlt } from 'react-icons/fa';
 import { PanelLeft } from 'lucide-react';
 import { signOut } from '@/utils/actions';
-
+import logo from '@/resources/images/hr-logo.png';
+import Image from 'next/image';
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
   const pathname = usePathname();
@@ -41,17 +42,19 @@ const Sidebar = () => {
         >
           <div className="flex items-center space-x-2 overflow-hidden">
             {isOpen && (
-              <span className="whitespace-nowrap text-2xl font-bold">
-                HR Management
-              </span>
+              // <span className="whitespace-nowrap text-2xl font-bold">
+              //   HR Management
+              // </span>
+              <Image src={logo} alt='logo' height={0} width={0}/>
             )}
           </div>
           <button
             onClick={toggleSidebar}
-            className="rounded-full hover:bg-gray-200"
+        
+            className={`rounded-full ${isOpen ? '' : 'mt-4 mb-14'}`} 
           >
-            <PanelLeft className="h-8 w-8" />
-          </button>
+        <PanelLeft className='h-8 w-8 ' />
+        </button>
         </div>
 
         {/* Menu */}

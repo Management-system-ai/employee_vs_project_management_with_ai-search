@@ -8,7 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { getUser } from '@/utils/user';
 export const metadata = {
   title: 'HR Management',
-  description: 'Dashboard layout for the application'
+  description: 'Dashboard layout for the application', 
 };
 
 export default async function RootLayout({
@@ -20,6 +20,9 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
+       <head>
+        <link rel="icon"  type="image/png" sizes="16x16"href="/hr-logo.png" /> 
+      </head>
       <body className="flex bg-gray-100 text-[#212F3F]">
         {/* Sidebar */}
         {/* <div className="w-64">

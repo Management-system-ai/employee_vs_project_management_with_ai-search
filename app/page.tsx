@@ -147,7 +147,7 @@ const DashboardPage: React.FC = () => {
           </div>
 
           <div className="rounded-lg bg-white p-6 shadow">
-            <h2 className="text-xl font-bold text-gray-800">Top Skills</h2>
+            <h2 className="text-xl font-bold text-gray-800">Popular skills in projects</h2>
             <p className="mt-4 text-3xl font-bold text-gray-600">
               {skillsData.totalSkills}
             </p>

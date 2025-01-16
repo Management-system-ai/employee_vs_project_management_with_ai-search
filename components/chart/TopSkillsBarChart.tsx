@@ -24,8 +24,8 @@ const TopSkillsBarChart: React.FC<TopSkillsBarChartProps> = ({ topSkills }) => {
     labels: topSkills.map(skill => skill.skillName),
     datasets: [
       {
-        label: 'Number of Employees',
-        data: topSkills.map(skill => skill.employeeCount),
+        label: 'Number of project using this skill',
+        data: topSkills.map(skill => skill.projectCount),
         backgroundColor: 'rgba(75, 192, 192, 0.6)',
         borderColor: 'rgba(75, 192, 192, 1)',
         borderWidth: 1,
@@ -50,7 +50,7 @@ const TopSkillsBarChart: React.FC<TopSkillsBarChartProps> = ({ topSkills }) => {
       },
       title: {
         display: true,
-        text: 'Top 5 Skills',
+        text: 'Top 5 skills using popular in the projects',
       },
     },
   };

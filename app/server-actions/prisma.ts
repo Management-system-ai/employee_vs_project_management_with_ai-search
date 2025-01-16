@@ -239,28 +239,25 @@ export async function fetchRecentlyActivities() {
 
 export async function fetchSkillsData() {
   try {
-    // Get total skills count
     const totalSkills = await prisma.skills.count({
       where: {
         isActive: true
       }
     });
 
-    // Get top 5 skills by employee count
-    const topSkills = await prisma.employeeSkills.groupBy({
+    const topSkills = await prisma.projectSkills.groupBy({
       by: ['skillId'],
       _count: {
-        employeeId: true
+        skillId: true
       },
       orderBy: {
         _count: {
-          employeeId: 'desc'
+          skillId: 'desc'
         }
       },
       take: 5
     });
 
-    // Get skill names for the top skills
     const topSkillsWithNames = await Promise.all(
       topSkills.map(async (skill) => {
         const skillInfo = await prisma.skills.findUnique({
@@ -268,7 +265,7 @@ export async function fetchSkillsData() {
         });
         return {
           skillName: skillInfo?.name || 'Unknown Skill',
-          employeeCount: skill._count.employeeId
+          projectCount: skill._count.skillId
         };
       })
     );

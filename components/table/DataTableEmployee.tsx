@@ -72,7 +72,7 @@ const DataTableEmployee: React.FC<DataEmployeeTableProps> = ({ employees }) => {
                   <span className="ml-2">{employee.name}</span>
                 </div>
               </td>
-              <td className="border-b px-4 py-2">{employee.email}</td>
+              <td className="border-b px-4 py-2 truncate">{employee.email}</td>
               <td className="border-b px-4 py-2">
                 {employee.dateOfBirth
                   ? new Date(employee.dateOfBirth).toLocaleDateString("en-GB")

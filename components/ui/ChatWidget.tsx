@@ -9,6 +9,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import 'highlight.js/styles/atom-one-dark.css';
+import { IoSend } from 'react-icons/io5'
 
 const suggestedQuestions = [
   "Tìm tất cả các dự án thuộc domain 'X'",
@@ -34,7 +35,7 @@ const SuggestedQuestions = ({
         <button
           key={index}
           onClick={() => onSelectQuestion(question)}
-          className="rounded-md border border-gray-200 bg-white px-4 py-2 text-left text-sm text-purple-600 shadow-sm transition-all duration-200 ease-in-out hover:scale-[1.02] hover:border-purple-300 hover:bg-purple-50 hover:shadow-md"
+          className="rounded-md border border-gray-200 bg-white px-4 py-2 text-left text-sm text-pink-500 shadow-sm transition-all duration-200 ease-in-out hover:scale-[1.02] hover:border-purple-300 hover:bg-purple-50 hover:shadow-md"
         >
           {question}
         </button>
@@ -93,17 +94,17 @@ export default function ChatBot({ hidden }: { hidden: boolean }) {
       >
         <button
           onClick={toggleChatbox}
-          className="flex items-center rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 px-2 py-2 text-white transition-all duration-300 hover:scale-105 hover:shadow-lg"
+          className="flex items-center rounded-lg bg-gradient-to-r from-red-600 to-pink-500 px-2 py-2 text-white transition-all duration-300 hover:scale-105 hover:shadow-lg"
         >
           <PlusIcon className="animate-spin-slow mr-2 h-6 w-6" />
-          Chat with Admin Bot
+          Chat with AI assistant
         </button>
       </div>
       {isChatboxOpen && (
         <div className="animate-slideUp fixed bottom-16 right-6 w-96">
           <div className="w-full max-w-lg rounded-lg bg-white shadow-2xl transition-all duration-300">
-            <div className="flex items-center justify-between rounded-t-lg border-b bg-gradient-to-r from-purple-500 to-pink-500 p-4 text-white">
-              <p className="text-lg font-semibold">Admin Bot</p>
+            <div className="flex items-center justify-between rounded-t-lg border-b bg-gradient-to-r from-red-600 to-pink-500 p-4 text-white">
+              <p className="text-lg font-semibold">HR Assistant</p>
               <button
                 onClick={toggleChatbox}
                 className="text-white opacity-75 transition-opacity hover:opacity-100 focus:outline-none"
@@ -124,11 +125,10 @@ export default function ChatBot({ hidden }: { hidden: boolean }) {
                     className={`animate-fadeIn mb-2 ${message.role === USER_ROLE ? 'text-right' : ''}`}
                   >
                     <div
-                      className={`${
-                        message.role === USER_ROLE
-                          ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
+                      className={`${message.role === USER_ROLE
+                          ? 'bg-gradient-to-r from-red-600 to-pink-500 text-white'
                           : 'bg-white text-gray-700 shadow-md'
-                      } inline-block rounded-2xl px-4 py-2 transition-all duration-300 hover:shadow-lg`}
+                        } inline-block rounded-2xl px-4 py-2 transition-all duration-300 hover:shadow-lg`}
                     >
                       {message.role === USER_ROLE ? (
                         message.content
@@ -157,13 +157,14 @@ export default function ChatBot({ hidden }: { hidden: boolean }) {
                   }
                 }}
                 placeholder="Type a message"
-                className="w-full rounded-l-full border px-4 py-2 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full rounded-l-full border px-4 py-2 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-600"
               />
               <button
                 onClick={handleSendMessage}
-                className="rounded-r-full bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-2 text-white transition-all duration-300 hover:opacity-90 hover:shadow-lg"
+                className="flex items-center space-x-2 rounded-r-full bg-gradient-to-r from-red-600 to-pink-500 px-6 py-2 text-white transition-all duration-300 hover:opacity-90 hover:shadow-lg"
               >
-                Send
+                <span>Send</span>
+                <IoSend size={20} />
               </button>
             </div>
           </div>

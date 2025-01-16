@@ -24,7 +24,7 @@ const EmployeePage: React.FC = () => {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 5;
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);

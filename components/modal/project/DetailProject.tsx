@@ -266,7 +266,7 @@ const DetailProjectModal: React.FC<ProjectDetailProps> = ({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="h-3/4 w-1/2 rounded-lg bg-white p-6">
+      <div className="h-3/4 w-2/3 rounded-lg bg-white p-6">
         <div className="flex justify-between">
           <h2 className="mb-4 text-xl font-bold">Project Details</h2>
           <button

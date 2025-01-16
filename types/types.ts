@@ -158,7 +158,7 @@ export interface Activity {
 
 export interface TopSkill {
   skillName: string;
-  employeeCount: number;
+  projectCount: number;
 }
 
 export interface TopSkillsData {
